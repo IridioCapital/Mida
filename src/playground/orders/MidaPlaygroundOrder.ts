@@ -42,6 +42,7 @@ export class MidaPlaygroundOrder extends MidaOrder {
         purpose,
         limitPrice,
         stopPrice,
+        requestedProtection,
         status,
         creationDate,
         lastUpdateDate,
@@ -51,7 +52,6 @@ export class MidaPlaygroundOrder extends MidaOrder {
         isStopOut,
         label,
         engineEmitter,
-        requestedProtection,
     }: MidaPlaygroundOrderParameters) {
         super({
             id,
@@ -62,6 +62,7 @@ export class MidaPlaygroundOrder extends MidaOrder {
             purpose,
             limitPrice,
             stopPrice,
+            requestedProtection,
             status,
             creationDate,
             lastUpdateDate,
@@ -73,13 +74,8 @@ export class MidaPlaygroundOrder extends MidaOrder {
         });
 
         this.#engineEmitter = engineEmitter;
-        this.#requestedProtection = requestedProtection;
 
         this.#configureListeners();
-    }
-
-    public get requestedProtection (): MidaProtectionDirectives | undefined {
-        return this.#requestedProtection;
     }
 
     public override async cancel (): Promise<void> {

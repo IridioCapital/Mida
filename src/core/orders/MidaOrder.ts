@@ -23,6 +23,7 @@
 import { MidaTradingAccount, } from "#accounts/MidaTradingAccount";
 import { MidaDate, } from "#dates/MidaDate";
 import { decimal, MidaDecimal, } from "#decimals/MidaDecimal";
+import { MidaDecimalConvertible, } from "#decimals/MidaDecimalConvertible";
 import { MidaEvent, } from "#events/MidaEvent";
 import { MidaEventListener, } from "#events/MidaEventListener";
 import { logger, } from "#loggers/MidaLogger";
@@ -35,6 +36,7 @@ import { MidaOrderRejection, } from "#orders/MidaOrderRejection";
 import { MidaOrderStatus, } from "#orders/MidaOrderStatus";
 import { MidaOrderTimeInForce, } from "#orders/MidaOrderTimeInForce";
 import { MidaPosition, } from "#positions/MidaPosition";
+import { MidaProtectionDirectives, } from "#protections/MidaProtectionDirectives";
 import { filterExecutedTrades, MidaTrade, } from "#trades/MidaTrade";
 import { MidaEmitter, } from "#utilities/emitters/MidaEmitter";
 import { GenericObject, } from "#utilities/GenericObject";
@@ -50,6 +52,7 @@ export abstract class MidaOrder {
     readonly #purpose: MidaOrderPurpose;
     #limitPrice?: MidaDecimal;
     #stopPrice?: MidaDecimal;
+    readonly #requestedProtection?: MidaProtectionDirectives;
     #status: MidaOrderStatus;
     #creationDate?: MidaDate;
     #lastUpdateDate?: MidaDate;
@@ -71,6 +74,7 @@ export abstract class MidaOrder {
         purpose,
         limitPrice,
         stopPrice,
+        requestedProtection,
         status,
         creationDate,
         lastUpdateDate,
@@ -90,6 +94,7 @@ export abstract class MidaOrder {
         this.#purpose = purpose;
         this.#limitPrice = limitPrice;
         this.#stopPrice = stopPrice;
+        this.#requestedProtection = requestedProtection;
         this.#status = status;
         this.#creationDate = creationDate;
         this.#lastUpdateDate = lastUpdateDate;
@@ -137,6 +142,40 @@ export abstract class MidaOrder {
 
     public get stopPrice (): MidaDecimal | undefined {
         return this.#stopPrice;
+    }
+
+    public get requestedProtection (): MidaProtectionDirectives | undefined {
+        return this.#requestedProtection;
+    }
+
+    public get stopLoss (): MidaDecimal | undefined {
+        const stopLoss: MidaDecimalConvertible | undefined = this.#requestedProtection?.stopLoss;
+
+        if (stopLoss === undefined) {
+            return undefined;
+        }
+
+        return decimal(stopLoss);
+    }
+
+    public get takeProfit (): MidaDecimal | undefined {
+        const takeProfit: MidaDecimalConvertible | undefined = this.#requestedProtection?.takeProfit;
+
+        if (takeProfit === undefined) {
+            return undefined;
+        }
+
+        return decimal(takeProfit);
+    }
+
+    public get trailingStopLoss (): boolean | undefined {
+        const trailingStopLoss = this.#requestedProtection?.trailingStopLoss;
+
+        if (trailingStopLoss === undefined) {
+            return undefined;
+        }
+
+        return trailingStopLoss;
     }
 
     public get status (): MidaOrderStatus {

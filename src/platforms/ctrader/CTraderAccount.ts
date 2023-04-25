@@ -493,6 +493,8 @@ export class CTraderAccount extends MidaTradingAccount {
         const direction: MidaOrderDirection = tradeSide === "SELL" ? MidaOrderDirection.SELL : MidaOrderDirection.BUY;
         const limitPrice: MidaDecimal | undefined = plainOrder.limitPrice ? decimal(plainOrder.limitPrice) : undefined;
         const stopPrice: MidaDecimal | undefined = plainOrder.stopPrice ? decimal(plainOrder.stopPrice) : undefined;
+        const stopLoss: MidaDecimal | undefined = plainOrder.stopLoss ? decimal(plainOrder.stopLoss) : undefined;
+        const takeProfit: MidaDecimal | undefined = plainOrder.takeProfit ? decimal(plainOrder.takeProfit) : undefined;
         let status: MidaOrderStatus;
 
         switch (plainOrder.orderStatus) {
@@ -541,6 +543,11 @@ export class CTraderAccount extends MidaTradingAccount {
             purpose,
             limitPrice,
             stopPrice,
+            requestedProtection: {
+                stopLoss,
+                takeProfit,
+                trailingStopLoss: plainOrder.trailingStopLoss === true,
+            },
             status,
             creationDate: openDate,
             lastUpdateDate: date(plainOrder.utcLastUpdateTimestamp),
@@ -691,6 +698,7 @@ export class CTraderAccount extends MidaTradingAccount {
             limitPrice,
             stopPrice,
             status: MidaOrderStatus.REQUESTED,
+            requestedProtection: directives.protection,
             creationDate: undefined,
             lastUpdateDate: undefined,
             timeInForce,
@@ -702,7 +710,6 @@ export class CTraderAccount extends MidaTradingAccount {
             uuid: internalId,
             connection: this.#connection,
             cTraderEmitter: this.#cTraderEmitter,
-            requestedProtection: directives.protection,
         });
 
         const plainSymbol: Record<string, any> = this.#cTraderSymbols.get(symbol) as Record<string, any>;

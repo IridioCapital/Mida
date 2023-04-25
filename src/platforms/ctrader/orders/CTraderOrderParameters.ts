@@ -20,14 +20,13 @@
  * THE SOFTWARE.
 */
 
-import { MidaOrderParameters, } from "#orders/MidaOrderParameters";
-import { MidaProtectionDirectives, } from "#protections/MidaProtectionDirectives";
-import { MidaEmitter, } from "#utilities/emitters/MidaEmitter";
 import { CTraderConnection, } from "@reiryoku/ctrader-layer";
+
+import { MidaOrderParameters, } from "#orders/MidaOrderParameters";
+import { MidaEmitter, } from "#utilities/emitters/MidaEmitter";
 
 export type CTraderOrderParameters = MidaOrderParameters & {
     uuid: string;
     connection: CTraderConnection;
     cTraderEmitter: MidaEmitter;
-    requestedProtection?: MidaProtectionDirectives;
 };

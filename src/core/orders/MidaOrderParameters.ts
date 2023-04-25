@@ -29,6 +29,7 @@ import { MidaOrderPurpose, } from "#orders/MidaOrderPurpose";
 import { MidaOrderRejection, } from "#orders/MidaOrderRejection";
 import { MidaOrderStatus, } from "#orders/MidaOrderStatus";
 import { MidaOrderTimeInForce, } from "#orders/MidaOrderTimeInForce";
+import { MidaProtectionDirectives, } from "#protections/MidaProtectionDirectives";
 import { MidaTrade, } from "#trades/MidaTrade";
 
 /**
@@ -44,6 +45,7 @@ export type MidaOrderParameters = {
     purpose: MidaOrderPurpose;
     limitPrice?: MidaDecimal;
     stopPrice?: MidaDecimal;
+    requestedProtection?: MidaProtectionDirectives;
     status: MidaOrderStatus;
     creationDate?: MidaDate;
     lastUpdateDate?: MidaDate;

@@ -21,13 +21,13 @@
 */
 
 import { CTraderConnection, } from "@reiryoku/ctrader-layer";
+
 import { date, MidaDate, } from "#dates/MidaDate";
 import { MidaOrder, } from "#orders/MidaOrder";
 import { MidaOrderRejection, } from "#orders/MidaOrderRejection";
 import { MidaOrderStatus, } from "#orders/MidaOrderStatus";
 import { MidaPosition, } from "#positions/MidaPosition";
 import { MidaPositionStatus, } from "#positions/MidaPositionStatus";
-import { MidaProtectionDirectives, } from "#protections/MidaProtectionDirectives";
 import { MidaQueue, } from "#queues/MidaQueue";
 import { MidaEmitter, } from "#utilities/emitters/MidaEmitter";
 import { CTraderAccount, } from "!/src/platforms/ctrader/CTraderAccount";
@@ -38,7 +38,6 @@ export class CTraderOrder extends MidaOrder {
     readonly #uuid: string;
     readonly #connection: CTraderConnection;
     readonly #cTraderEmitter: MidaEmitter;
-    readonly #requestedProtection?: MidaProtectionDirectives;
     readonly #updateEventQueue: MidaQueue<Record<string, any>>;
     #updateEventUuid?: string;
     #rejectEventUuid?: string;
@@ -53,6 +52,7 @@ export class CTraderOrder extends MidaOrder {
         purpose,
         limitPrice,
         stopPrice,
+        requestedProtection,
         status,
         creationDate,
         lastUpdateDate,
@@ -65,7 +65,6 @@ export class CTraderOrder extends MidaOrder {
         uuid,
         connection,
         cTraderEmitter,
-        requestedProtection,
     }: CTraderOrderParameters) {
         super({
             id,
@@ -76,6 +75,7 @@ export class CTraderOrder extends MidaOrder {
             purpose,
             limitPrice,
             stopPrice,
+            requestedProtection,
             status,
             creationDate,
             lastUpdateDate,
@@ -90,7 +90,6 @@ export class CTraderOrder extends MidaOrder {
         this.#uuid = uuid;
         this.#connection = connection;
         this.#cTraderEmitter = cTraderEmitter;
-        this.#requestedProtection = requestedProtection;
         this.#updateEventQueue = new MidaQueue({ worker: (descriptor: Record<string, any>): Promise<void> => this.#onUpdate(descriptor), });
         this.#updateEventUuid = undefined;
         this.#rejectEventUuid = undefined;
@@ -161,11 +160,11 @@ export class CTraderOrder extends MidaOrder {
 
                 // Enters if the order is executed
                 if (order.orderStatus.toUpperCase() === "ORDER_STATUS_FILLED") {
-                    if (order.orderType.toUpperCase() === "MARKET" && this.#requestedProtection) {
+                    if (order.orderType.toUpperCase() === "MARKET" && this.requestedProtection) {
                         const position: MidaPosition | undefined = await this.getPosition();
 
                         if (position?.status === MidaPositionStatus.OPEN) {
-                            await position.changeProtection(this.#requestedProtection);
+                            await position.changeProtection(this.requestedProtection);
                         }
                     }
 

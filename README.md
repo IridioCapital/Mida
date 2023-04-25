@@ -649,7 +649,8 @@ its contributors are not responsible for any technical inconvenience that
 may lead to money loss, for example a stop loss not being set.
 
 ## Contributors
-| Name or Username    | Contribution           | GitHub                                          | Contact                   |
-|---------------------|------------------------|-------------------------------------------------|---------------------------|
-| Vasile Pește        | Founder and maintainer | [Vasile-Peste](https://github.com/Vasile-Peste) | vasile.peste@reiryoku.com |
-| dbvcode             | Active collaborator    | [dbvcode](https://github.com/dbvcode)           | /                         |
+| Name or Username | Contribution           | GitHub                                          | Contact                   |
+|------------------|------------------------|-------------------------------------------------|---------------------------|
+| Vasile Pește     | Founder and maintainer | [Vasile-Peste](https://github.com/Vasile-Peste) | vasile.peste@reiryoku.com |
+| dbvcode          | Active collaborator    | [dbvcode](https://github.com/dbvcode)           | /                         |
+| JoeGuest         | Collaborator           | [JoeGuest](https://github.com/JoeGuest)         | /                         |
