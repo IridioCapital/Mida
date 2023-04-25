@@ -81,6 +81,15 @@ export abstract class MidaIndicator {
         return value;
     }
 
+    public async recalculate (input: MidaIndicatorIo[]): Promise<MidaIndicatorIo[]> {
+        const value: MidaIndicatorIo[] = await this.calculate(input);
+
+        this.#inputs = input;
+        this.#values = value;
+
+        return value;
+    }
+
     public clear (): void {
         this.#inputs = [];
         this.#values = [];

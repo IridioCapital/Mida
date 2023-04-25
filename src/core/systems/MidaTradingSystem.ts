@@ -77,8 +77,12 @@ export abstract class MidaTradingSystem {
         this.#orders = [];
         this.#capturedTicks = [];
         this.#capturedPeriods = [];
-        this.#tickEventQueue = new MidaQueue({ worker: (tick: MidaTick): Promise<void> => this.#onTickWorker(tick), });
-        this.#periodUpdateEventQueue = new MidaQueue({ worker: (period: MidaPeriod): Promise<void> => this.#onPeriodUpdateWorker(period), });
+        this.#tickEventQueue = new MidaQueue({
+            worker: (tick: MidaTick): Promise<void> => this.#onTickWorker(tick),
+        });
+        this.#periodUpdateEventQueue = new MidaQueue({
+            worker: (period: MidaPeriod): Promise<void> => this.#onPeriodUpdateWorker(period),
+        });
         this.#isConfigured = false;
         this.#marketWatcher = undefined;
         this.#symbolStates = new Map();

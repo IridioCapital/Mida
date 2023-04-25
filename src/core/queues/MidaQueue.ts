@@ -41,7 +41,7 @@ export class MidaQueue<T> {
     }
 
     public add (item: T): void {
-        this.#processItem(item);
+        this.#processItem(item).then();
     }
 
     async #processItem (item: T, bypassLock: boolean = false): Promise<void> {
@@ -68,7 +68,7 @@ export class MidaQueue<T> {
         const nextItem: T | undefined = this.#items.shift();
 
         if (nextItem) {
-            this.#processItem(nextItem, true);
+            this.#processItem(nextItem, true).then();
         }
         else {
             this.#isLocked = false;

@@ -1,6 +1,10 @@
 ### Features
+* Core | Enforce all events order from most specific to most generic (m15PeriodUpdate -> periodUpdate -> update) [#104](https://github.com/Reiryoku-Technologies/Mida/pull/104)
 * cTrader | Add `requestedProtection` to orders [#103](https://github.com/Reiryoku-Technologies/Mida/pull/103)
 * Core | Add `requestedProtection` to `MidaOrder` for accessing an order's stop loss, take profit and trailing stop loss [#103](https://github.com/Reiryoku-Technologies/Mida/pull/103)
+
+###  Bug fixes
+* Core | Fix a bug where indicators values in market components could result empty during relevant execution times [#104](https://github.com/Reiryoku-Technologies/Mida/pull/104)
 
 2023.1.2 - 13-03-2023
 ===================
