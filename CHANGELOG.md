@@ -1,3 +1,5 @@
+2023.2.0 - 04-05-2023
+===================
 ### Features
 * Core | Define `clientOrderId` in Orders API [#107](https://github.com/Reiryoku-Technologies/Mida/pull/107) | [#102](https://github.com/Reiryoku-Technologies/Mida/issues/102)
 * Binance | Integrate `clientOrderId` [#107](https://github.com/Reiryoku-Technologies/Mida/pull/107) | [#102](https://github.com/Reiryoku-Technologies/Mida/issues/102)

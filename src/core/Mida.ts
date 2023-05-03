@@ -37,7 +37,7 @@ class Mida {
     static readonly #installedPlugins: Map<string, MidaPlugin> = new Map();
 
     public static get version (): string {
-        return "2023.1.2";
+        return "2023.2.0";
     }
 
     public static get logger (): MidaLogger {
