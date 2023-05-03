@@ -56,4 +56,5 @@ export type MidaOrderParameters = {
     rejection?: MidaOrderRejection;
     isStopOut?: boolean;
     label?: string;
+    clientOrderId?: string;
 };

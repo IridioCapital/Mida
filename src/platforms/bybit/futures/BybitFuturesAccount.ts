@@ -123,6 +123,7 @@ export class BybitFuturesAccount extends MidaTradingAccount {
             bybitEmitter: this.#bybitEmitter,
             directives,
             isStopOut: false,
+            clientOrderId: directives.clientOrderId,
             trades: [],
         });
 
@@ -256,6 +257,7 @@ export class BybitFuturesAccount extends MidaTradingAccount {
             trades: [],
             direction: bybitOrder.side === "Buy" ? MidaOrderDirection.BUY : MidaOrderDirection.SELL,
             isStopOut: false,
+            clientOrderId: bybitOrder.orderLinkId,
             lastUpdateDate: bybitOrder.updatedTime ? date(bybitOrder.updatdeTime) : creationDate,
             limitPrice: bybitOrder.type === "Limit" ? decimal(bybitOrder.price) : undefined,
             purpose: bybitOrder.side === "Buy" ? MidaOrderPurpose.OPEN : MidaOrderPurpose.CLOSE,

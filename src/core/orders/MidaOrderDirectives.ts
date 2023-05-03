@@ -39,6 +39,7 @@ export type MidaOrderDirectives = {
     timeInForce?: MidaOrderTimeInForce;
     expirationDate?: MidaDateConvertible;
     label?: string;
+    clientOrderId?: string;
     postOnly?: boolean;
     listeners?: {
         [eventType: string]: MidaEventListener;

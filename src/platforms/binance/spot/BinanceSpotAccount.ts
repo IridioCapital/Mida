@@ -122,6 +122,7 @@ export class BinanceSpotAccount extends MidaTradingAccount {
             directives,
             isStopOut: false,
             trades: [],
+            clientOrderId: directives.clientOrderId,
         });
 
         const listeners: { [eventType: string]: MidaEventListener } = directives.listeners ?? {};
@@ -297,6 +298,7 @@ export class BinanceSpotAccount extends MidaTradingAccount {
             timeInForce: BinanceSpotUtilities.normalizeTimeInForce(binanceOrder.timeInForce),
             binanceConnection: this.#binanceConnection,
             binanceEmitter: this.#binanceEmitter,
+            clientOrderId: binanceOrder.clientOrderId,
         });
     }
 

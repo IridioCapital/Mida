@@ -62,6 +62,7 @@ export class CTraderOrder extends MidaOrder {
         rejection,
         isStopOut,
         label,
+        clientOrderId,
         uuid,
         connection,
         cTraderEmitter,
@@ -85,6 +86,7 @@ export class CTraderOrder extends MidaOrder {
             rejection,
             isStopOut,
             label,
+            clientOrderId,
         });
 
         this.#uuid = uuid;

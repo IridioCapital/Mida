@@ -64,6 +64,7 @@ export class BybitFuturesOrder extends MidaOrder {
         trades,
         rejection,
         isStopOut,
+        clientOrderId,
         bybitConnection,
         bybitEmitter,
         directives,
@@ -84,6 +85,7 @@ export class BybitFuturesOrder extends MidaOrder {
             trades,
             rejection,
             isStopOut,
+            clientOrderId,
         });
 
         this.#bybitConnection = bybitConnection;
@@ -155,6 +157,10 @@ export class BybitFuturesOrder extends MidaOrder {
         if (this.timeInForce) {
             bybitDirectives.timeInForce =
                 BybitFuturesUtilities.toBybitTimeInForce(this.timeInForce) as USDCTimeInForce;
+        }
+
+        if (directives.clientOrderId) {
+            bybitDirectives.orderLinkId = directives.clientOrderId;
         }
 
         const protection: MidaProtectionDirectives = directives.protection ?? {};

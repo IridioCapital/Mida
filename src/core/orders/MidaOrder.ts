@@ -63,6 +63,7 @@ export abstract class MidaOrder {
     #rejection?: MidaOrderRejection;
     readonly #isStopOut: boolean;
     readonly #label?: string;
+    readonly #clientOrderId?: string;
     readonly #emitter: MidaEmitter;
 
     protected constructor ({
@@ -85,6 +86,7 @@ export abstract class MidaOrder {
         rejection,
         isStopOut,
         label,
+        clientOrderId,
     }: MidaOrderParameters) {
         this.#id = id;
         this.#tradingAccount = tradingAccount;
@@ -105,6 +107,7 @@ export abstract class MidaOrder {
         this.#rejection = rejection;
         this.#isStopOut = isStopOut ?? false;
         this.#label = label;
+        this.#clientOrderId = clientOrderId;
         this.#emitter = new MidaEmitter();
     }
 
@@ -232,6 +235,10 @@ export abstract class MidaOrder {
 
     public get label (): string | undefined {
         return this.#label;
+    }
+
+    public get clientOrderId (): string | undefined {
+        return this.#clientOrderId;
     }
 
     public get isExecuted (): boolean {

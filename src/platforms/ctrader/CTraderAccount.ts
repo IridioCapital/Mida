@@ -557,9 +557,10 @@ export class CTraderAccount extends MidaTradingAccount {
             rejection: undefined,
             isStopOut: plainOrder.isStopOut === true,
             label: plainOrder.tradeData?.label,
-            uuid: plainOrder.clientOrderId || undefined,
+            clientOrderId: plainOrder.clientOrderId || undefined,
             connection: this.#connection,
             cTraderEmitter: this.#cTraderEmitter,
+            uuid: plainOrder.clientOrderId || undefined,
         });
 
         this.#orders.set(orderId, normalizedOrder);
@@ -707,6 +708,7 @@ export class CTraderAccount extends MidaTradingAccount {
             rejection: undefined,
             isStopOut: false, // Stop out orders are sent by the platform
             label: directives.label,
+            clientOrderId: directives.clientOrderId,
             uuid: internalId,
             connection: this.#connection,
             cTraderEmitter: this.#cTraderEmitter,
@@ -732,6 +734,12 @@ export class CTraderAccount extends MidaTradingAccount {
 
         if (label) {
             requestDirectives.label = label;
+        }
+
+        const clientOrderId: string | undefined = directives.clientOrderId;
+
+        if (clientOrderId) {
+            requestDirectives.clientOrderId = clientOrderId;
         }
 
         if (!existingPosition) {

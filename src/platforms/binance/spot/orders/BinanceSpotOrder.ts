@@ -60,6 +60,7 @@ export class BinanceSpotOrder extends MidaOrder {
         trades,
         rejection,
         isStopOut,
+        clientOrderId,
         binanceConnection,
         binanceEmitter,
         directives,
@@ -80,6 +81,7 @@ export class BinanceSpotOrder extends MidaOrder {
             trades,
             rejection,
             isStopOut,
+            clientOrderId,
         });
 
         this.#binanceConnection = binanceConnection;
@@ -156,8 +158,11 @@ export class BinanceSpotOrder extends MidaOrder {
             plainDirectives.timeInForce = BinanceSpotUtilities.toBinanceTimeInForce(directives.timeInForce);
         }
 
+        if (directives.clientOrderId) {
+            plainDirectives.newClientOrderId = directives.clientOrderId;
+        }
+
         this.#binanceConnection.order(<NewOrderSpot>plainDirectives).then((plainOrder: Record<string, any>) => {
-            console.log(plainOrder);
             this.#onResponse(plainOrder);
         }).catch((plainError: Record<string, any>) => {
             this.#onResponseReject(plainError);
