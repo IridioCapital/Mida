@@ -588,6 +588,7 @@ export class BybitFuturesAccount extends MidaTradingAccount {
             }
 
             if (descriptor.topic.indexOf("kline") === 0) {
+                descriptor.data = descriptor.data[0];
                 descriptor.data.symbol = descriptor.topic.split(".").at(-1);
 
                 this.#onPeriodUpdate(descriptor.data);
