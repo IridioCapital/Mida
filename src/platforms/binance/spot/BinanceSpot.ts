@@ -36,8 +36,8 @@ const platformDescriptor: Readonly<Record<string, any>> = {
     name: "Binance Spot",
     siteUri: "https://www.binance.com",
     primaryAsset: "USDT",
-    httpTestnet: "https://testnet.binance.vision",
-    wsTestnet: "wss://testnet.binance.vision",
+    httpTestnet: "https://testnet.binance.vision/api",
+    wsTestnet: "wss://testnet.binance.vision/ws",
 };
 
 export class BinanceSpot extends MidaTradingPlatform {
