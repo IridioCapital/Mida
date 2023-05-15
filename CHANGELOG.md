@@ -1,5 +1,8 @@
 ### Features
-Binance | Add `S1` timeframe [#114](https://github.com/Reiryoku-Technologies/Mida/pull/114)
+* Binance | Add `S1` timeframe [#114](https://github.com/Reiryoku-Technologies/Mida/pull/114)
+
+### Bug fixes
+* Binance | Use correct testnet endpoints [#115](https://github.com/Reiryoku-Technologies/Mida/pull/115)
 
 2023.3.0 - 14-05-2023
 ===================
