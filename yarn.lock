@@ -1039,10 +1039,10 @@ bignumber.js@^9.0.0:
   resolved "https://registry.npmjs.org/bignumber.js/-/bignumber.js-9.1.1.tgz"
   integrity sha512-pHm4LsMJ6lzgNGVfZHjMoO8sdoRhOzOH4MLmY65Jg70bpxCKu5iOHNJyfF6OyvYw7t8Fpf35RuzUyqnQsj8Vig==
 
-binance-api-node@^0.12.2:
-  version "0.12.2"
-  resolved "https://registry.npmjs.org/binance-api-node/-/binance-api-node-0.12.2.tgz"
-  integrity sha512-X9zKjYhcp+smUMxmZvJdcqd22wQnD8gyjRKCmf1dno9Ft/mr9ZavtzHzjJaoXGbHbcGI2gSSg6fa8ozfT6B6Yg==
+binance-api-node@^0.12.4:
+  version "0.12.4"
+  resolved "https://registry.npmjs.org/binance-api-node/-/binance-api-node-0.12.4.tgz"
+  integrity sha512-QeOBhPPSukvpzjRdrQudOUcz2HIh+1jEMCEG5Xby/07e2/4DQ22HBuYf7W7Qj7q7cmefqsflP6l/e4pLFfSfwQ==
   dependencies:
     https-proxy-agent "^5.0.0"
     isomorphic-fetch "^3.0.0"
