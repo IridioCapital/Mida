@@ -32,6 +32,7 @@ import {
 import { MidaTradingAccount, } from "#accounts/MidaTradingAccount";
 import { MidaAsset, } from "#assets/MidaAsset";
 import { MidaAssetStatement, } from "#assets/MidaAssetStatement";
+import { unsupportedOperationError, } from "#errors/MidaErrorUtilities";
 import { date, MidaDate, } from "#dates/MidaDate";
 import { decimal, MidaDecimal, } from "#decimals/MidaDecimal";
 import { MidaEventListener, } from "#events/MidaEventListener";
@@ -204,6 +205,10 @@ export class BinanceSpotAccount extends MidaTradingAccount {
         }
 
         return totalPrimaryAssetBalance;
+    }
+
+    public override async stillConnected (): Promise<boolean> {
+        throw unsupportedOperationError(this.platform);
     }
 
     public override async getUsedMargin (): Promise<MidaDecimal> {

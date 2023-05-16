@@ -172,6 +172,10 @@ export class MidaPlaygroundAccount extends MidaTradingAccount {
         return equity;
     }
 
+    public override async stillConnected (): Promise<boolean> {
+        return true;
+    }
+
     public override async getUsedMargin (): Promise<MidaDecimal> {
         return decimal(0);
     }

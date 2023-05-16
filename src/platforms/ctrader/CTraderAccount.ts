@@ -962,6 +962,19 @@ export class CTraderAccount extends MidaTradingAccount {
         return cTraderOrders;
     }
 
+    public override async stillConnected (): Promise<boolean> {
+        try {
+            await this.#getAccountDescriptor();
+
+            return true;
+        }
+        catch (e) {
+            console.error(e);
+        }
+
+        return false;
+    }
+
     async #getAccountDescriptor (): Promise<Record<string, any>> {
         return (await this.#sendCommand("ProtoOATraderReq")).trader;
     }
