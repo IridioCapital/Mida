@@ -1,6 +1,8 @@
+2023.4.0 - 16-05-2023
+===================
 ### Features
 * cTrader | Add support for `stillConnected()` [#109](https://github.com/Reiryoku-Technologies/Mida/pull/109)
-* Core | Define `stillConnected()` method to `MidaTradingAccount` for checking if the account is still connected to the trading platform [#109](https://github.com/Reiryoku-Technologies/Mida/pull/109)
+* Core | Define `stillConnected()` method in `MidaTradingAccount` for checking if the account is still connected to the trading platform [#109](https://github.com/Reiryoku-Technologies/Mida/pull/109)
 * Binance | Add `S1` timeframe [#114](https://github.com/Reiryoku-Technologies/Mida/pull/114)
 
 ### Bug fixes
