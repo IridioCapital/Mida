@@ -120,6 +120,9 @@ export abstract class MidaTradingAccount {
         return this.#positionAccounting === MidaTradingAccountPositionAccounting.HEDGED;
     }
 
+    /** Used to check if the account is still connected */
+    public abstract stillConnected (): Promise<boolean>;
+
     /** Used to get the account primary asset balance */
     public abstract getBalance (): Promise<MidaDecimal>;
 

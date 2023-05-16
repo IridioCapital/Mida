@@ -31,6 +31,7 @@ import { MidaAsset, } from "#assets/MidaAsset";
 import { MidaAssetStatement, } from "#assets/MidaAssetStatement";
 import { date, MidaDate, } from "#dates/MidaDate";
 import { decimal, MidaDecimal, } from "#decimals/MidaDecimal";
+import { unsupportedOperationError, } from "#errors/MidaErrorUtilities";
 import { MidaEventListener, } from "#events/MidaEventListener";
 import { MidaOrder, } from "#orders/MidaOrder";
 import { MidaOrderDirection, } from "#orders/MidaOrderDirection";
@@ -171,6 +172,10 @@ export class BybitFuturesAccount extends MidaTradingAccount {
         }
 
         return balanceSheet;
+    }
+
+    public override async stillConnected (): Promise<boolean> {
+        throw unsupportedOperationError(this.platform);
     }
 
     public override async getEquity (): Promise<MidaDecimal> {

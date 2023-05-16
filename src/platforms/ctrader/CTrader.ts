@@ -49,7 +49,17 @@ class CTrader extends MidaTradingPlatform {
         accountId,
     }: CTraderLoginParameters): Promise<CTraderAccount> {
         if (loggedAccounts.has(accountId)) {
-            return loggedAccounts.get(accountId) as CTraderAccount;
+            const loggedAccount = loggedAccounts.get(accountId) as CTraderAccount;
+            const stillConnected = await loggedAccount.stillConnected();
+
+            if (stillConnected) {
+                // Used to refetch the preloaded data that may be out of date
+                await loggedAccount.preload();
+
+                return loggedAccount;
+            }
+
+            loggedAccounts.delete(loggedAccount.id);
         }
 
         const cTraderApplication: CTraderApplication = await CTraderApplication.create({
