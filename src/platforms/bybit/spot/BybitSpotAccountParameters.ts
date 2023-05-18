@@ -20,14 +20,11 @@
  * THE SOFTWARE.
 */
 
-import { ContractClient, } from "bybit-api";
+import { SpotClientV3, WebsocketClient, } from "bybit-api";
 
-import { MidaOrderDirectives, } from "#orders/MidaOrderDirectives";
-import { MidaOrderParameters, } from "#orders/MidaOrderParameters";
-import { MidaEmitter, } from "#utilities/emitters/MidaEmitter";
+import { MidaTradingAccountParameters, } from "#accounts/MidaTradingAccountParameters";
 
-export type BybitFuturesOrderParameters = MidaOrderParameters & {
-    directives?: MidaOrderDirectives;
-    bybitConnection: ContractClient;
-    bybitEmitter: MidaEmitter;
+export type BybitSpotAccountParameters = MidaTradingAccountParameters & {
+    bybitConnection: SpotClientV3;
+    bybitWsConnection: WebsocketClient;
 };

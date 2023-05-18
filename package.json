@@ -35,7 +35,7 @@
     "dependencies": {
         "@reiryoku/ctrader-layer": "^2.2.0",
         "binance-api-node": "^0.12.4",
-        "bybit-api": "^3.3.9",
+        "bybit-api": "^3.5.8",
         "okx-api": "^1.0.2"
     },
     "devDependencies": {

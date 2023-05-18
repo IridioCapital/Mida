@@ -20,14 +20,8 @@
  * THE SOFTWARE.
 */
 
-import { ContractClient, } from "bybit-api";
-
-import { MidaOrderDirectives, } from "#orders/MidaOrderDirectives";
-import { MidaOrderParameters, } from "#orders/MidaOrderParameters";
-import { MidaEmitter, } from "#utilities/emitters/MidaEmitter";
-
-export type BybitFuturesOrderParameters = MidaOrderParameters & {
-    directives?: MidaOrderDirectives;
-    bybitConnection: ContractClient;
-    bybitEmitter: MidaEmitter;
+export type BybitSpotLoginParameters = {
+    apiKey: string;
+    apiSecret: string;
+    useTestnet?: boolean;
 };

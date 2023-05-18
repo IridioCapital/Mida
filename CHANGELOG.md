@@ -1,3 +1,6 @@
+### Features
+* Bybit | Integrate Spot [#117](https://github.com/Reiryoku-Technologies/Mida/pull/117)
+
 2023.4.0 - 16-05-2023
 ===================
 ### Features

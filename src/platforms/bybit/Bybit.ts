@@ -20,25 +20,33 @@
  * THE SOFTWARE.
 */
 
-import { BybitFutures, } from "!/src/platforms/bybit/futures/BybitFutures";
 import { baseActions, } from "#plugins/MidaPluginActions";
+import { BybitFutures, } from "!/src/platforms/bybit/futures/BybitFutures";
+import { BybitSpot, } from "!/src/platforms/bybit/spot/BybitSpot";
 
 baseActions.addPlatform("Bybit/Futures", BybitFutures.instance);
+baseActions.addPlatform("Bybit/Spot", BybitSpot.instance);
 
 // <public-api>
 export { BybitFuturesOrder, } from "!/src/platforms/bybit/futures/orders/BybitFuturesOrder";
 export { BybitFuturesOrderParameters, } from "!/src/platforms/bybit/futures/orders/BybitFuturesOrderParameters";
-
 export { BybitFuturesPosition, } from "!/src/platforms/bybit/futures/positions/BybitFuturesPosition";
 export { BybitFuturesPositionParameters, } from "!/src/platforms/bybit/futures/positions/BybitFuturesPositionParameters";
-
 export { BybitFuturesTrade, } from "!/src/platforms/bybit/futures/trades/BybitFuturesTrade";
 export { BybitFuturesTradeParameters, } from "!/src/platforms/bybit/futures/trades/BybitFuturesTradeParameters";
-
 export { BybitFutures, } from "!/src/platforms/bybit/futures/BybitFutures";
 export { BybitFuturesAccount, } from "!/src/platforms/bybit/futures/BybitFuturesAccount";
 export { BybitFuturesAccountParameters, } from "!/src/platforms/bybit/futures/BybitFuturesAccountParameters";
 export { BybitFuturesLoginParameters, } from "!/src/platforms/bybit/futures/BybitFuturesLoginParameters";
-
 export { BybitFuturesUtilities, } from "!/src/platforms/bybit/futures/utilities/BybitFuturesUtilities";
+
+export { BybitSpotOrder, } from "!/src/platforms/bybit/spot/orders/BybitSpotOrder";
+export { BybitSpotOrderParameters, } from "!/src/platforms/bybit/spot/orders/BybitSpotOrderParameters";
+export { BybitSpotTrade, } from "!/src/platforms/bybit/spot/trades/BybitSpotTrade";
+export { BybitSpotTradeParameters, } from "!/src/platforms/bybit/spot/trades/BybitSpotTradeParameters";
+export { BybitSpot, } from "!/src/platforms/bybit/spot/BybitSpot";
+export { BybitSpotAccount, } from "!/src/platforms/bybit/spot/BybitSpotAccount";
+export { BybitSpotAccountParameters, } from "!/src/platforms/bybit/spot/BybitSpotAccountParameters";
+export { BybitSpotLoginParameters, } from "!/src/platforms/bybit/spot/BybitSpotLoginParameters";
+export { BybitSpotUtilities, } from "!/src/platforms/bybit/spot/utilities/BybitSpotUtilities";
 // </public-api>
