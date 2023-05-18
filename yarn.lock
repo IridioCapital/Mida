@@ -1089,10 +1089,10 @@ buffer-from@^1.0.0:
   resolved "https://registry.npmjs.org/buffer-from/-/buffer-from-1.1.2.tgz"
   integrity sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==
 
-bybit-api@^3.3.9:
-  version "3.3.9"
-  resolved "https://registry.npmjs.org/bybit-api/-/bybit-api-3.3.9.tgz"
-  integrity sha512-xXaTbwPWzoWelIeSvQ6tAk7eNpt+S+AoJGZFz6kE6acCw8NWeDLojG1x1wGbUT7ZoP7Bhq2iSmchyTrK9M8INw==
+bybit-api@^3.5.8:
+  version "3.5.8"
+  resolved "https://registry.npmjs.org/bybit-api/-/bybit-api-3.5.8.tgz"
+  integrity sha512-Fb5dgYbMIVTMEoM6woCgXMZsfDg6w92ZTTmlQx0gAjNLI83oJTyHyzPsHJZ/V7WD/izIg+fRGei8pwX0+mwiCQ==
   dependencies:
     axios "^0.21.0"
     isomorphic-ws "^4.0.1"

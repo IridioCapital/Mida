@@ -21,8 +21,8 @@
 */
 
 import {
-    ContractClient,
-    KlineIntervalV3,
+    KlineInterval,
+    SpotClientV3,
     WebsocketClient,
 } from "bybit-api";
 
@@ -40,7 +40,7 @@ import { MidaOrderPurpose, } from "#orders/MidaOrderPurpose";
 import { MidaOrderStatus, } from "#orders/MidaOrderStatus";
 import { MidaOrderTimeInForce, } from "#orders/MidaOrderTimeInForce";
 import { MidaPeriod, } from "#periods/MidaPeriod";
-import { MidaPositionDirection, } from "#positions/MidaPositionDirection";
+import { MidaPosition, } from "#positions/MidaPosition";
 import { MidaQuotationPrice, } from "#quotations/MidaQuotationPrice";
 import { MidaSymbol, } from "#symbols/MidaSymbol";
 import { MidaSymbolFundingDescriptor, } from "#symbols/MidaSymbolFundingDescriptor";
@@ -54,14 +54,13 @@ import { MidaTradePurpose, } from "#trades/MidaTradePurpose";
 import { MidaTradeStatus, } from "#trades/MidaTradeStatus";
 import { MidaEmitter, } from "#utilities/emitters/MidaEmitter";
 import { createOrderResolver, } from "#utilities/MidaUtilities";
-import { BybitFuturesAccountParameters, } from "!/src/platforms/bybit/futures/BybitFuturesAccountParameters";
-import { BybitFuturesOrder, } from "!/src/platforms/bybit/futures/orders/BybitFuturesOrder";
-import { BybitFuturesPosition, } from "!/src/platforms/bybit/futures/positions/BybitFuturesPosition";
-import { BybitFuturesTrade, } from "!/src/platforms/bybit/futures/trades/BybitFuturesTrade";
-import { BybitFuturesUtilities, } from "!/src/platforms/bybit/futures/utilities/BybitFuturesUtilities";
+import { BybitSpotAccountParameters, } from "!/src/platforms/bybit/spot/BybitSpotAccountParameters";
+import { BybitSpotOrder, } from "!/src/platforms/bybit/spot/orders/BybitSpotOrder";
+import { BybitSpotTrade, } from "!/src/platforms/bybit/spot/trades/BybitSpotTrade";
+import { BybitSpotUtilities, } from "!/src/platforms/bybit/spot/utilities/BybitSpotUtilities";
 
-export class BybitFuturesAccount extends MidaTradingAccount {
-    readonly #bybitConnection: ContractClient;
+export class BybitSpotAccount extends MidaTradingAccount {
+    readonly #bybitConnection: SpotClientV3;
     readonly #bybitWsConnection: WebsocketClient;
     readonly #bybitEmitter: MidaEmitter;
     readonly #assets: Map<string, MidaAsset>;
@@ -80,7 +79,7 @@ export class BybitFuturesAccount extends MidaTradingAccount {
         indicativeLeverage,
         bybitConnection,
         bybitWsConnection,
-    }: BybitFuturesAccountParameters) {
+    }: BybitSpotAccountParameters) {
         super({
             id,
             platform,
@@ -106,11 +105,11 @@ export class BybitFuturesAccount extends MidaTradingAccount {
         await this.#configureListeners();
     }
 
-    public override async placeOrder (directives: MidaOrderDirectives): Promise<MidaOrder> {
+    public override async placeOrder (directives: MidaOrderDirectives): Promise<BybitSpotOrder> {
         const symbol: string = directives.symbol as string;
         const direction: MidaOrderDirection = directives.direction;
         const requestedVolume: MidaDecimal = decimal(directives.volume);
-        const order: BybitFuturesOrder = new BybitFuturesOrder({
+        const order: BybitSpotOrder = new BybitSpotOrder({
             id: "",
             direction,
             limitPrice: directives.limit !== undefined ? decimal(directives.limit) : undefined,
@@ -129,8 +128,8 @@ export class BybitFuturesAccount extends MidaTradingAccount {
         });
 
         const listeners: Record<string, MidaEventListener> = directives.listeners ?? {};
-        const resolver: Promise<BybitFuturesOrder> =
-            createOrderResolver(order, directives.resolverEvents) as Promise<BybitFuturesOrder>;
+        const resolver: Promise<BybitSpotOrder> =
+            createOrderResolver(order, directives.resolverEvents) as Promise<BybitSpotOrder>;
 
         for (const eventType of Object.keys(listeners)) {
             order.on(eventType, listeners[eventType]);
@@ -154,18 +153,18 @@ export class BybitFuturesAccount extends MidaTradingAccount {
 
     public override async getBalanceSheet (): Promise<MidaAssetStatement[]> {
         const balanceSheet: MidaAssetStatement[] = [];
-        const bybitAssets: Record<string, any>[] = (await this.#bybitConnection.getBalances()).result.list;
+        const bybitAssets: Record<string, any>[] = (await this.#bybitConnection.getBalances()).result.balances;
 
         for (const bybitAsset of bybitAssets) {
-            const totalVolume: MidaDecimal = decimal(bybitAsset.walletBalance);
+            const totalVolume: MidaDecimal = decimal(bybitAsset.total);
 
             if (totalVolume.greaterThan(0)) {
                 balanceSheet.push({
                     tradingAccount: this,
                     date: date(),
                     asset: bybitAsset.coin,
-                    freeVolume: totalVolume,
-                    lockedVolume: decimal(0),
+                    freeVolume: decimal(bybitAsset.free),
+                    lockedVolume: decimal(bybitAsset.locked),
                     borrowedVolume: decimal(0),
                 });
             }
@@ -196,7 +195,7 @@ export class BybitFuturesAccount extends MidaTradingAccount {
 
     public override async getTrades (symbol: string): Promise<MidaTrade[]> {
         const trades: MidaTrade[] = [];
-        const bybitTrades: Record<string, any>[] = (await this.#bybitConnection.getUserExecutionHistory({ symbol, })).result.list;
+        const bybitTrades: Record<string, any>[] = (await this.#bybitConnection.getTrades(symbol)).result.list;
 
         for (const bybitTrade of bybitTrades) {
             trades.push(this.normalizeTrade(bybitTrade));
@@ -205,71 +204,69 @@ export class BybitFuturesAccount extends MidaTradingAccount {
         return trades;
     }
 
-    public normalizeTrade (bybitTrade: Record<string, any>): BybitFuturesTrade {
-        return new BybitFuturesTrade({
-            id: bybitTrade.execId,
+    public normalizeTrade (bybitTrade: Record<string, any>): BybitSpotTrade {
+        return new BybitSpotTrade({
+            id: bybitTrade.tradeId,
             orderId: bybitTrade.orderId,
             positionId: "",
             tradingAccount: this,
             symbol: bybitTrade.symbol,
             commission: decimal(bybitTrade.execFee),
             commissionAsset: "",
-            direction: bybitTrade.side === "Buy" ? MidaTradeDirection.BUY : MidaTradeDirection.SELL,
-            executionDate: date(bybitTrade.execTime),
-            executionPrice: decimal(bybitTrade.execPrice),
+            direction: bybitTrade.isBuyer === "0" ? MidaTradeDirection.BUY : MidaTradeDirection.SELL,
+            executionDate: date(bybitTrade.executionTime),
+            executionPrice: decimal(bybitTrade.orderPrice),
             purpose: MidaTradePurpose.UNKNOWN,
             status: MidaTradeStatus.EXECUTED,
-            volume: decimal(bybitTrade.execQty),
+            volume: decimal(bybitTrade.orderQty),
         });
     }
 
-    public normalizeOrder (bybitOrder: Record<string, any>): BybitFuturesOrder {
-        const creationDate: MidaDate | undefined = bybitOrder.createdTime ? date(bybitOrder.createdTime) : undefined;
+    public normalizeOrder (bybitOrder: Record<string, any>): BybitSpotOrder {
+        const creationDate: MidaDate | undefined = bybitOrder.createTime ? date(bybitOrder.createTime) : undefined;
         let status: MidaOrderStatus = MidaOrderStatus.REQUESTED;
 
         switch (bybitOrder.orderStatus) {
-            case "New":
-            case "Created": {
-                if (bybitOrder.order_type !== "Market") {
+            case "NEW": {
+                if (bybitOrder.orderType !== "MARKET") {
                     status = MidaOrderStatus.PENDING;
                 }
 
                 break;
             }
-            case "PartiallyFilled":
-            case "Filled": {
+            case "PARTIALLY_FILLED":
+            case "FILLED": {
                 status = MidaOrderStatus.EXECUTED;
 
                 break;
             }
-            case "PendingCancel":
-            case "Cancelled": {
+            case "CANCELED": {
                 status = MidaOrderStatus.CANCELLED;
 
                 break;
             }
-            case "Rejected": {
+            case "REJECTED": {
                 status = MidaOrderStatus.REJECTED;
 
                 break;
             }
         }
 
-        return new BybitFuturesOrder({
+        return new BybitSpotOrder({
             id: bybitOrder.orderId,
             tradingAccount: this,
             creationDate,
             trades: [],
-            direction: bybitOrder.side === "Buy" ? MidaOrderDirection.BUY : MidaOrderDirection.SELL,
+            direction: bybitOrder.side === "BUY" ? MidaOrderDirection.BUY : MidaOrderDirection.SELL,
             isStopOut: false,
             clientOrderId: bybitOrder.orderLinkId,
-            lastUpdateDate: bybitOrder.updatedTime ? date(bybitOrder.updatedTime) : creationDate,
-            limitPrice: bybitOrder.type === "Limit" ? decimal(bybitOrder.price) : undefined,
-            purpose: bybitOrder.side === "Buy" ? MidaOrderPurpose.OPEN : MidaOrderPurpose.CLOSE,
-            requestedVolume: decimal(bybitOrder.qty),
+            lastUpdateDate: bybitOrder.updateTime ? date(bybitOrder.updateTime) : creationDate,
+            limitPrice: bybitOrder.orderType === "LIMIT" ? decimal(bybitOrder.avgPrice) : undefined,
+            purpose: bybitOrder.side === "BUY" ? MidaOrderPurpose.OPEN : MidaOrderPurpose.CLOSE,
+            requestedVolume: decimal(bybitOrder.orderQty),
             status,
             symbol: bybitOrder.symbol,
-            timeInForce: BybitFuturesUtilities.normalizeTimeInForce(bybitOrder.timeInForce),
+            timeInForce: BybitSpotUtilities.normalizeTimeInForce(bybitOrder.timeInForce),
             bybitConnection: this.#bybitConnection,
             bybitEmitter: this.#bybitEmitter,
         });
@@ -277,10 +274,7 @@ export class BybitFuturesAccount extends MidaTradingAccount {
 
     public override async getOrders (symbol: string): Promise<MidaOrder[]> {
         const executedOrders: MidaOrder[] = [];
-        const bybitOrders: Record<string, any>[] = (await this.#bybitConnection.getHistoricOrders({
-            symbol,
-            limit: 50,
-        })).result.list;
+        const bybitOrders: Record<string, any>[] = (await this.#bybitConnection.getPastOrders(symbol)).result.list;
 
         for (const bybitOrder of bybitOrders) {
             const order = this.normalizeOrder(bybitOrder);
@@ -294,7 +288,7 @@ export class BybitFuturesAccount extends MidaTradingAccount {
     }
 
     public override async getPendingOrders (): Promise<MidaOrder[]> {
-        const bybitOrders: Record<string, any>[] = (await this.#bybitConnection.getActiveOrders({})).result;
+        const bybitOrders: Record<string, any>[] = (await this.#bybitConnection.getOpenOrders()).result;
         const pendingOrders: MidaOrder[] = [];
 
         for (const bybitOrder of bybitOrders) {
@@ -349,12 +343,7 @@ export class BybitFuturesAccount extends MidaTradingAccount {
     }
 
     public override async getSymbolFundingDescriptor (symbol: string): Promise<MidaSymbolFundingDescriptor> {
-        const lastBybitTick: Record<string, any> = (await this.#bybitConnection.getSymbolTicker("linear", symbol)).result.list[0];
-
-        return {
-            fundingRate: decimal(lastBybitTick.fundingRate),
-            nextFundingDate: date(lastBybitTick.nextFundingTime),
-        };
+        throw unsupportedOperationError(this.platform);
     }
 
     async #getSymbolLastTick (symbol: string): Promise<MidaTick> {
@@ -364,7 +353,7 @@ export class BybitFuturesAccount extends MidaTradingAccount {
             return lastTick;
         }
 
-        const lastBybitTick: Record<string, any> = (await this.#bybitConnection.getSymbolTicker("linear", symbol)).result.list[0];
+        const lastBybitTick: Record<string, any> = (await this.#bybitConnection.getBestBidAskPrice(symbol)).result;
 
         return new MidaTick({
             date: date(),
@@ -390,35 +379,28 @@ export class BybitFuturesAccount extends MidaTradingAccount {
     }
 
     public override async getSymbolPeriods (symbol: string, timeframe: MidaTimeframe): Promise<MidaPeriod[]> {
-        const to: MidaDate = date();
         const periods: MidaPeriod[] = [];
-        const timeframeSeconds: number = MidaTimeframe.toSeconds(timeframe) ?? 60;
-        const bybitPeriods: any[] = (await this.#bybitConnection.getCandles({
-            category: "linear",
-            symbol,
-            interval: BybitFuturesUtilities.toBybitTimeframe(timeframe) as KlineIntervalV3,
-            start: to.timestamp - timeframeSeconds * 1000 * 180,
-            end: to.timestamp,
-        })).result.list;
+        const bybitPeriods: any[] =
+                (await this.#bybitConnection.getCandles(symbol, BybitSpotUtilities.toBybitTimeframe(timeframe) as KlineInterval)).result.list;
 
         // Order from oldest to newest
-        bybitPeriods.sort((left, right): number => Number(left[0]) - Number(right[0]));
+        bybitPeriods.sort((left, right): number => Number(left.t) - Number(right.t));
 
         for (let i = 0; i < bybitPeriods.length - 1; ++i) {
             const bybitPeriod: Record<string, any> = bybitPeriods[i];
 
             periods.push(new MidaPeriod({
                 symbol,
-                close: decimal(bybitPeriod[4]),
-                high: decimal(bybitPeriod[2]),
-                low: decimal(bybitPeriod[3]),
-                open: decimal(bybitPeriod[1]),
+                close: decimal(bybitPeriod.c),
+                high: decimal(bybitPeriod.h),
+                low: decimal(bybitPeriod.l),
+                open: decimal(bybitPeriod.o),
                 quotationPrice: MidaQuotationPrice.BID,
-                startDate: date(bybitPeriod[0]),
-                endDate: date(bybitPeriods[i + 1][0]),
+                startDate: date(bybitPeriod.t),
+                endDate: date(bybitPeriods[i + 1].t),
                 timeframe,
                 isClosed: true,
-                volume: decimal(bybitPeriod[5]),
+                volume: decimal(bybitPeriod.v),
             }));
         }
 
@@ -438,7 +420,7 @@ export class BybitFuturesAccount extends MidaTradingAccount {
             return;
         }
 
-        this.#bybitWsConnection.subscribe(`tickers.${symbol}`);
+        this.#bybitWsConnection.subscribe(`bookticker.${symbol}`);
         this.#tickListeners.set(symbol, true);
     }
 
@@ -449,29 +431,13 @@ export class BybitFuturesAccount extends MidaTradingAccount {
             return;
         }
 
-        this.#bybitWsConnection.subscribe(`kline.${BybitFuturesUtilities.toBybitTimeframe(timeframe)}.${symbol}`);
+        this.#bybitWsConnection.subscribe(`kline.${BybitSpotUtilities.toBybitTimeframe(timeframe)}.${symbol}`);
         listenedTimeframes.push(timeframe);
         this.#periodListeners.set(symbol, listenedTimeframes);
     }
 
-    public override async getOpenPositions (): Promise<BybitFuturesPosition[]> {
-        const openPositions: BybitFuturesPosition[] = [];
-        const bybitPositions: Record<string, any>[] = (await this.#bybitConnection
-            .getPositions({ settleCoin: "USDT", })).result.list;
-
-        for (const bybitPosition of bybitPositions) {
-            openPositions.push(new BybitFuturesPosition({
-                id: "",
-                tradingAccount: this,
-                symbol: bybitPosition.symbol,
-                volume: decimal(bybitPosition.size),
-                direction: bybitPosition.side === "Buy" ? MidaPositionDirection.LONG : MidaPositionDirection.SHORT,
-                bybitConnection: this.#bybitConnection,
-                bybitEmitter: this.#bybitEmitter,
-            }));
-        }
-
-        return openPositions;
+    public override async getOpenPositions (): Promise<MidaPosition[]> {
+        return [];
     }
 
     public override async isSymbolMarketOpen (symbol: string): Promise<boolean> {
@@ -484,9 +450,9 @@ export class BybitFuturesAccount extends MidaTradingAccount {
     }
 
     #onTick (descriptor: Record<string, any>): void {
-        const symbol: string = descriptor.symbol;
-        const bid: MidaDecimal = decimal(descriptor.bid1Price);
-        const ask: MidaDecimal = decimal(descriptor.ask1Price);
+        const symbol: string = descriptor.s;
+        const bid: MidaDecimal = decimal(descriptor.bp);
+        const ask: MidaDecimal = decimal(descriptor.ap);
         const previousTick: MidaTick | undefined = this.#lastTicks.get(symbol);
         const movement: MidaTickMovement | undefined = ((): MidaTickMovement | undefined => {
             const currentBidIsEqualToPrevious: boolean = previousTick?.bid.equals(bid) ?? false;
@@ -528,7 +494,7 @@ export class BybitFuturesAccount extends MidaTradingAccount {
 
     #onPeriodUpdate (descriptor: Record<string, any>): void {
         const symbol: string = descriptor.symbol;
-        const timeframe: MidaTimeframe = BybitFuturesUtilities.normalizeTimeframe(descriptor[0].interval);
+        const timeframe: MidaTimeframe = descriptor.timeframe;
 
         if (!(this.#periodListeners.get(symbol) ?? []).includes(timeframe)) {
             return;
@@ -536,31 +502,28 @@ export class BybitFuturesAccount extends MidaTradingAccount {
 
         const period: MidaPeriod = new MidaPeriod({
             symbol,
-            close: decimal(descriptor[0].close),
-            high: decimal(descriptor[0].high),
-            low: decimal(descriptor[0].low),
-            open: decimal(descriptor[0].open),
+            close: decimal(descriptor.c),
+            high: decimal(descriptor.h),
+            low: decimal(descriptor.l),
+            open: decimal(descriptor.o),
             quotationPrice: MidaQuotationPrice.BID,
-            startDate: date(descriptor[0].start),
-            endDate: date(descriptor[0].timestamp),
+            startDate: date(descriptor.t),
+            endDate: date(descriptor.t),
             timeframe,
-            isClosed: descriptor[0].confirm === true,
-            volume: decimal(descriptor[0].volume),
+            isClosed: false,
+            volume: decimal(descriptor.v),
         });
 
         this.notifyListeners("period-update", { period, });
     }
 
     async #preloadSymbols (): Promise<void> {
-        const bybitSymbols: Record<string, any>[] = (await this.#bybitConnection.getInstrumentInfo({
-            category: "linear",
-            limit: "1000",
-        })).result.list;
+        const bybitSymbols: Record<string, any>[] = (await this.#bybitConnection.getSymbols()).result.list;
 
         this.#symbols.clear();
 
         for (const bybitSymbol of bybitSymbols) {
-            const symbol: string = bybitSymbol.symbol;
+            const symbol: string = bybitSymbol.name;
 
             this.#symbols.set(symbol, new MidaSymbol({
                 symbol,
@@ -570,10 +533,10 @@ export class BybitFuturesAccount extends MidaTradingAccount {
                 description: "",
                 leverage: decimal(-1),
                 lotUnits: decimal(1),
-                maxLots: decimal(bybitSymbol.lotSizeFilter.maxTradingQty ?? -1),
-                minLots: decimal(bybitSymbol.lotSizeFilter.minTradingQty ?? -1),
+                maxLots: decimal(bybitSymbol.minTradeQty ?? -1),
+                minLots: decimal(bybitSymbol.maxTradeQty ?? -1),
                 pipPosition: -1,
-                digits: Number(bybitSymbol.priceScale),
+                digits: Number(bybitSymbol.quotePrecision),
             }));
         }
     }
@@ -588,13 +551,13 @@ export class BybitFuturesAccount extends MidaTradingAccount {
 
     async #configureListeners (): Promise<void> {
         this.#bybitWsConnection.on("update", (descriptor: Record<string, any>): void => {
-            if (descriptor.topic.indexOf("tickers") === 0) {
+            if (descriptor.topic.indexOf("bookticker") === 0) {
                 this.#onTick(descriptor.data);
             }
 
             if (descriptor.topic.indexOf("kline") === 0) {
-                descriptor.data = descriptor.data[0];
-                descriptor.data.symbol = descriptor.topic.split(".").at(-1);
+                descriptor.data.symbol = descriptor.data.s;
+                descriptor.data.timeframe = BybitSpotUtilities.normalizeTimeframe(descriptor.topic.split(".").at(1));
 
                 this.#onPeriodUpdate(descriptor.data);
             }

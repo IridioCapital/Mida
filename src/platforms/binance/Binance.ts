@@ -28,15 +28,11 @@ baseActions.addPlatform("Binance/Spot", BinanceSpot.instance);
 // <public-api>
 export { BinanceSpotOrder, } from "!/src/platforms/binance/spot/orders/BinanceSpotOrder";
 export { BinanceSpotOrderParameters, } from "!/src/platforms/binance/spot/orders/BinanceSpotOrderParameters";
-
 export { BinanceSpotTrade, } from "!/src/platforms/binance/spot/trades/BinanceSpotTrade";
 export { BinanceSpotTradeParameters, } from "!/src/platforms/binance/spot/trades/BinanceSpotTradeParameters";
-
 export { BinanceSpot, } from "!/src/platforms/binance/spot/BinanceSpot";
 export { BinanceSpotAccount, } from "!/src/platforms/binance/spot/BinanceSpotAccount";
 export { BinanceSpotAccountParameters, } from "!/src/platforms/binance/spot/BinanceSpotAccountParameters";
-
 export { BinanceSpotLoginParameters, } from "!/src/platforms/binance/spot/BinanceSpotLoginParameters";
-
 export { BinanceSpotUtilities, } from "!/src/platforms/binance/spot/utilities/BinanceSpotUtilities";
 // </public-api>

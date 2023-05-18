@@ -20,15 +20,8 @@
  * THE SOFTWARE.
 */
 
-import {
-    ContractClient,
-    ContractOrderRequest as BybitOrderDirectives,
-    USDCTimeInForce,
-} from "bybit-api";
+import { NewSpotOrderV3, SpotClientV3, } from "bybit-api";
 
-import { BybitFuturesTrade, } from "!/src/platforms/bybit/futures/trades/BybitFuturesTrade";
-import { BybitFuturesOrderParameters, } from "!/src/platforms/bybit/futures/orders/BybitFuturesOrderParameters";
-import { BybitFuturesUtilities, } from "!/src/platforms/bybit/futures/utilities/BybitFuturesUtilities";
 import { date, MidaDate, } from "#dates/MidaDate";
 import { decimal, MidaDecimal, } from "#decimals/MidaDecimal";
 import { MidaEvent, } from "#events/MidaEvent";
@@ -37,14 +30,16 @@ import { MidaOrderDirection, } from "#orders/MidaOrderDirection";
 import { MidaOrderDirectives, } from "#orders/MidaOrderDirectives";
 import { MidaOrderRejection, } from "#orders/MidaOrderRejection";
 import { MidaOrderStatus, } from "#orders/MidaOrderStatus";
-import { MidaProtectionDirectives, } from "#protections/MidaProtectionDirectives";
 import { MidaTradeDirection, } from "#trades/MidaTradeDirection";
 import { MidaTradePurpose, } from "#trades/MidaTradePurpose";
 import { MidaTradeStatus, } from "#trades/MidaTradeStatus";
 import { MidaEmitter, } from "#utilities/emitters/MidaEmitter";
+import { BybitSpotOrderParameters, } from "!/src/platforms/bybit/spot/orders/BybitSpotOrderParameters";
+import { BybitSpotTrade, } from "!/src/platforms/bybit/spot/trades/BybitSpotTrade";
+import { BybitSpotUtilities, } from "!/src/platforms/bybit/spot/utilities/BybitSpotUtilities";
 
-export class BybitFuturesOrder extends MidaOrder {
-    readonly #bybitConnection: ContractClient;
+export class BybitSpotOrder extends MidaOrder {
+    readonly #bybitConnection: SpotClientV3;
     readonly #bybitEmitter: MidaEmitter;
     readonly #directives?: MidaOrderDirectives;
 
@@ -68,7 +63,7 @@ export class BybitFuturesOrder extends MidaOrder {
         bybitConnection,
         bybitEmitter,
         directives,
-    }: BybitFuturesOrderParameters) {
+    }: BybitSpotOrderParameters) {
         super({
             id,
             tradingAccount,
@@ -109,10 +104,7 @@ export class BybitFuturesOrder extends MidaOrder {
         }
 
         try {
-            await this.#bybitConnection.cancelOrder({
-                symbol: this.symbol,
-                orderId: this.id,
-            });
+            await this.#bybitConnection.cancelOrder({ orderId: this.id, });
 
             this.lastUpdateDate = date();
             this.onStatusChange(MidaOrderStatus.CANCELLED);
@@ -140,44 +132,36 @@ export class BybitFuturesOrder extends MidaOrder {
         const direction: MidaOrderDirection = directives.direction;
         const volume: MidaDecimal = decimal(directives.volume);
 
-        const bybitDirectives: Partial<BybitOrderDirectives> = {
+        const bybitDirectives: Partial<NewSpotOrderV3> = {
             symbol,
             side: direction === MidaOrderDirection.BUY ? "Buy" : "Sell",
-            qty: volume.toString(),
+            orderQty: volume.toString(),
         };
 
         if (directives.limit) {
-            bybitDirectives.price = decimal(directives.limit).toString();
-            bybitDirectives.orderType = "Limit";
+            bybitDirectives.orderPrice = decimal(directives.limit).toString();
+            bybitDirectives.orderType = "LIMIT";
         }
         else {
-            bybitDirectives.orderType = "Market";
+            bybitDirectives.orderType = "MARKET";
         }
 
         if (this.timeInForce) {
-            bybitDirectives.timeInForce =
-                BybitFuturesUtilities.toBybitTimeInForce(this.timeInForce) as USDCTimeInForce;
+            bybitDirectives.timeInForce = BybitSpotUtilities.toBybitTimeInForce(this.timeInForce) as any;
         }
 
         if (directives.clientOrderId) {
             bybitDirectives.orderLinkId = directives.clientOrderId;
         }
 
-        const protection: MidaProtectionDirectives = directives.protection ?? {};
-
-        if ("takeProfit" in protection) {
-            bybitDirectives.takeProfit = decimal(protection.takeProfit).toString();
-        }
-
-        if ("stopLoss" in protection) {
-            bybitDirectives.stopLoss = decimal(protection.stopLoss).toString();
-        }
-
-        this.#bybitConnection.submitOrder(bybitDirectives as BybitOrderDirectives)
+        this.#bybitConnection.submitOrder(bybitDirectives as NewSpotOrderV3)
             .then((descriptor: Record<string, any>): void => this.#onResponse(descriptor));
     }
 
     #onResponse (descriptor: Record<string, any>): void {
+        console.log("Spot Response");
+        console.log(descriptor);
+
         if (descriptor["ret_code"]) {
             this.#onResponseReject(descriptor);
 
@@ -198,7 +182,6 @@ export class BybitFuturesOrder extends MidaOrder {
         this.creationDate = currentDate;
         this.lastUpdateDate = currentDate;
 
-        // Documentation Reference https://bybit-exchange.github.io/docs/futuresV2/linear/#t-errors
         switch (descriptor["ret_code"]) {
             case 130021: {
                 this.rejection = MidaOrderRejection.NOT_ENOUGH_MONEY;
@@ -274,7 +257,7 @@ export class BybitFuturesOrder extends MidaOrder {
         }
 
         if (descriptor.executionType.toUpperCase() === "TRADE") {
-            this.onTrade(new BybitFuturesTrade({
+            this.onTrade(new BybitSpotTrade({
                 commission: decimal(descriptor.commission),
                 commissionAsset: descriptor.commissionAsset,
                 direction: this.#directives?.direction === MidaOrderDirection.BUY ? MidaTradeDirection.BUY : MidaTradeDirection.SELL,
