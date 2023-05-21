@@ -20,19 +20,14 @@
  * THE SOFTWARE.
 */
 
-import { Mida, } from "!/src/core/Mida";
-import { logger, } from "#loggers/MidaLogger";
+import { WebSocket, } from "ws";
 
-// <public-api>
-export * from "!/src/core/Mida";
+import { MidaTradingAccountParameters, } from "#accounts/MidaTradingAccountParameters";
+import { BitFlyerAccountRegion, } from "!/src/platforms/bitflyer/BitFlyerAccountRegion";
+import { BitFlyerHttpClient, } from "!/src/platforms/bitflyer/BitFlyerHttpClient";
 
-export * from "!/src/platforms/binance/Binance";
-export * from "!/src/platforms/bitflyer/BitFlyer";
-export * from "!/src/platforms/bybit/Bybit";
-export * from "!/src/platforms/ctrader/CTrader";
-export * from "!/src/platforms/okx/Okx";
-
-export * from "!/src/playground/MidaPlayground";
-// </public-api>
-
-logger.info(`Using Mida ${Mida.version}`);
+export type BitFlyerSpotAccountParameters = MidaTradingAccountParameters & {
+    httpClient: BitFlyerHttpClient;
+    wsClient: WebSocket;
+    region: BitFlyerAccountRegion;
+};

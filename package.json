@@ -36,12 +36,14 @@
         "@reiryoku/ctrader-layer": "^2.2.0",
         "binance-api-node": "^0.12.4",
         "bybit-api": "^3.5.8",
-        "okx-api": "^1.0.2"
+        "okx-api": "^1.0.2",
+        "ws": "^8.13.0"
     },
     "devDependencies": {
         "@reiryoku/eslint-config-reiryoku": "^3.0.0",
         "@types/jest": "^29.2.5",
         "@types/node": "^18.11.18",
+        "@types/ws": "^8.5.4",
         "@typescript-eslint/eslint-plugin": "^5.48.1",
         "@typescript-eslint/parser": "^5.48.1",
         "eslint": "^8.31.0",
