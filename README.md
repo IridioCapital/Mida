@@ -666,3 +666,13 @@ may lead to money loss, for example a stop loss not being set.
 | JoeGuest         | Collaborator           | [JoeGuest](https://github.com/JoeGuest)               | /                         |
 | Yannick Jemmely  | Collaborator           | [yannickjemmely](https://github.com/yannickjemmely)   | /                         |
 | Lorenzo Iovino   | Collaborator           | [lokenxo](https://github.com/lokenxo)                 | /                         |
+
+## Keywords
+A set of keywords related to Mida
+
+Algotrading Node.js
+Binance Node.js API
+cTrader Node.js API
+Bybit Node.js API
+Bybit Node.js API
+bitFlyer Node.js API
