@@ -674,5 +674,4 @@ Algotrading Node.js<br>
 Binance Node.js API<br>
 cTrader Node.js API<br>
 Bybit Node.js API<br>
-Bybit Node.js API<br>
 bitFlyer Node.js API
