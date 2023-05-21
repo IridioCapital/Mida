@@ -668,11 +668,11 @@ may lead to money loss, for example a stop loss not being set.
 | Lorenzo Iovino   | Collaborator           | [lokenxo](https://github.com/lokenxo)                 | /                         |
 
 ## Keywords
-A set of keywords related to Mida
+A set of keywords strictly related to Mida
 
-Algotrading Node.js
-Binance Node.js API
-cTrader Node.js API
-Bybit Node.js API
-Bybit Node.js API
+Algotrading Node.js<br>
+Binance Node.js API<br>
+cTrader Node.js API<br>
+Bybit Node.js API<br>
+Bybit Node.js API<br>
 bitFlyer Node.js API
