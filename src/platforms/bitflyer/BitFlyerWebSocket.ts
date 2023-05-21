@@ -20,19 +20,36 @@
  * THE SOFTWARE.
 */
 
-import { Mida, } from "!/src/core/Mida";
-import { logger, } from "#loggers/MidaLogger";
+import * as crypto from "node:crypto";
+import { WebSocket, } from "ws";
 
-// <public-api>
-export * from "!/src/core/Mida";
+const BITFLYER_WEB_SOCKET_URI: string = "wss://ws.lightstream.bitflyer.com/json-rpc";
 
-export * from "!/src/platforms/binance/Binance";
-export * from "!/src/platforms/bitflyer/BitFlyer";
-export * from "!/src/platforms/bybit/Bybit";
-export * from "!/src/platforms/ctrader/CTrader";
-export * from "!/src/platforms/okx/Okx";
+export async function createBitflyerPrivateWs (apiKey: string, apiSecret: string): Promise<WebSocket> {
+    const socket: WebSocket = new WebSocket(BITFLYER_WEB_SOCKET_URI);
+    const timestamp: string = Date.now().toString();
+    const nonce: string = crypto.randomBytes(16).toString("hex");
+    const signature: string = crypto.createHmac("sha256", apiSecret).update(`${timestamp}${nonce}`).digest("hex");
+    const authentication: Record<string, string> = {
+        timestamp,
+        nonce,
+        signature,
+        "api_key": apiKey,
+    };
 
-export * from "!/src/playground/MidaPlayground";
-// </public-api>
+    await new Promise((resolve, reject) => {
+        socket.on("open", async () => {
+            socket.send(JSON.stringify({
+                jsonrpc: "2.0",
+                method: "auth",
+                params: authentication,
+            }), resolve);
+        });
 
-logger.info(`Using Mida ${Mida.version}`);
+        socket.on("error", (e) => {
+            reject(e);
+        });
+    });
+
+    return socket;
+}

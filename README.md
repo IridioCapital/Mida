@@ -68,12 +68,13 @@ easily executed on different trading platforms.
 <br><br>
 
 #### Supported platforms
-| Name          | ID            | Trading                                  | Sign Up                                                             |
-|---------------|---------------|------------------------------------------|---------------------------------------------------------------------|
-| Binance Spot  | Binance/Spot  | Crypto Spot                              | [Sign Up](https://accounts.binance.com/en/register?ref=172142672)   |
-| Bybit Spot    | Bybit/Spot    | Crypto Spot                              | [Sign Up](https://www.bybit.com/invite?ref=JN5XQR)                  |
-| Bybit Futures | Bybit/Futures | Crypto Futures                           | [Sign Up](https://www.bybit.com/invite?ref=JN5XQR)                  |
-| cTrader       | cTrader       | Forex, Crypto, Stocks & Commodities CFDs | [Sign Up](https://www.mida.org/posts/how-to-use-mida-with-ctrader/) |
+| Name          | ID             | Trading                                  | Sign Up                                                             |
+|---------------|----------------|------------------------------------------|---------------------------------------------------------------------|
+| Binance Spot  | Binance/Spot   | Crypto Spot                              | [Sign Up](https://accounts.binance.com/en/register?ref=172142672)   |
+| cTrader       | cTrader        | Forex, Crypto, Stocks & Commodities CFDs | [Sign Up](https://www.mida.org/posts/how-to-use-mida-with-ctrader/) |
+| Bybit Spot    | Bybit/Spot     | Crypto Spot                              | [Sign Up](https://www.bybit.com/invite?ref=JN5XQR)                  |
+| Bybit Futures | Bybit/Futures  | Crypto Futures                           | [Sign Up](https://www.bybit.com/invite?ref=JN5XQR)                  |
+| bitFlyer      | bitFlyer/Spot  | Crypto Spot                              | [Sign Up](https://bitflyer.com/invitation?id=ntcerzci)              |
 
 ### Community
 Join the community on [Discord](https://discord.gg/cKyWTUsr3q) and [Telegram](https://t.me/joinmida)

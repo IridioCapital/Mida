@@ -1,7 +1,10 @@
+### Features
+* bitFlyer | Integrate bitFlyer Spot as "bitFlyer/Spot" [#119](https://github.com/Reiryoku-Technologies/Mida/pull/119)
+
 2023.5.0 - 18-05-2023
 ===================
 ### Features
-* Bybit | Integrate Spot as "Bybit/Spot" [#117](https://github.com/Reiryoku-Technologies/Mida/pull/117)
+* Bybit | Integrate Bybit Spot as "Bybit/Spot" [#117](https://github.com/Reiryoku-Technologies/Mida/pull/117)
 
 2023.4.0 - 16-05-2023
 ===================
