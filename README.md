@@ -74,7 +74,7 @@ easily executed on different trading platforms.
 | cTrader       | cTrader        | Forex, Crypto, Stocks & Commodities CFDs | [Sign Up](https://www.mida.org/posts/how-to-use-mida-with-ctrader/) |
 | Bybit Spot    | Bybit/Spot     | Crypto Spot                              | [Sign Up](https://www.bybit.com/invite?ref=JN5XQR)                  |
 | Bybit Futures | Bybit/Futures  | Crypto Futures                           | [Sign Up](https://www.bybit.com/invite?ref=JN5XQR)                  |
-| bitFlyer      | bitFlyer/Spot  | Crypto Spot                              | [Sign Up](https://bitflyer.com/invitation?id=ntcerzci)              |
+| bitFlyer      | bitFlyer/Spot  | Crypto Spot                              | [Sign Up](https://bitflyer.com/invitation?id=ntcerzci&lang=en-GB)   |
 
 ### Community
 Join the community on [Discord](https://discord.gg/cKyWTUsr3q) and [Telegram](https://t.me/joinmida)
@@ -88,8 +88,8 @@ npm install @reiryoku/mida
 
 ## Usage
 ### Account login
-How to login into a Binance Spot account.<br>
-Read [how to use Mida with Binance](https://www.mida.org/posts/how-to-use-mida-with-binance/) to
+How to login into a Binance Spot account,<br>
+read [how to use Mida with Binance](https://www.mida.org/posts/how-to-use-mida-with-binance/) to
 get your `apiKey` and `apiSecret` credentials.
 ```javascript
 import { login, } from "@reiryoku/mida";
@@ -100,7 +100,9 @@ const myAccount = await login("Binance/Spot", {
 });
 ```
 
-How to login into a Bybit Futures account.
+How to login into a Bybit Futures account,<br>
+Read [how to use Mida with Bybit](https://www.mida.org/posts/how-to-use-mida-with-bybit/) to
+get your `apiKey` and `apiSecret` credentials.
 ```javascript
 import { login, } from "@reiryoku/mida";
 
@@ -109,10 +111,10 @@ const myAccount = await login("Bybit/Futures", {
     apiSecret: "***",
 });
 ```
-Read [how to use Mida with Bybit](https://www.mida.org/posts/how-to-use-mida-with-bybit/) to
-get your `apiKey` and `apiSecret` credentials.
 
-How to login into a cTrader account.
+How to login into a cTrader account,
+Read [how to use Mida with cTrader](https://www.mida.org/posts/how-to-use-mida-with-ctrader/) to
+get your `clientId`, `clientSecret`, `accessToken` and `accountId` credentials.
 ```javascript
 import { login, } from "@reiryoku/mida";
 
@@ -123,8 +125,6 @@ const myAccount = await login("cTrader", {
     accountId: "***",
 });
 ```
-Read [how to use Mida with cTrader](https://www.mida.org/posts/how-to-use-mida-with-ctrader/) to
-get your `clientId`, `clientSecret`, `accessToken` and `accountId` credentials.
 
 How to login into multiple accounts.
 ```javascript
