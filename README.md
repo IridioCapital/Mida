@@ -304,7 +304,7 @@ such as a limit price are usually expressed as a `MidaDecimalConvertible` which 
 for `MidaDecimal | string | number`, the input values are internally converted to `MidaDecimal`
 and most Mida interfaces exposes decimal numbers unless otherwise stated.
 
-Read more about the [Decimals API](https://www.mida.org/documentation/essentials/decimals.html).
+Read more about the [Decimals API](https://www.mida.org/documentation/decimals/decimal.html).
 
 ### Symbols and assets
 How to retrieve all symbols available for your trading account.
