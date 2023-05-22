@@ -88,7 +88,9 @@ npm install @reiryoku/mida
 
 ## Usage
 ### Account login
-How to login into a Binance Spot account.
+How to login into a Binance Spot account.<br>
+Read [how to use Mida with Binance](https://www.mida.org/posts/how-to-use-mida-with-binance/) to
+get your `apiKey` and `apiSecret` credentials.
 ```javascript
 import { login, } from "@reiryoku/mida";
 
@@ -97,8 +99,6 @@ const myAccount = await login("Binance/Spot", {
     apiSecret: "***",
 });
 ```
-Read [how to use Mida with Binance](https://www.mida.org/posts/how-to-use-mida-with-binance/) to
-get your `apiKey` and `apiSecret` credentials.
 
 How to login into a Bybit Futures account.
 ```javascript
