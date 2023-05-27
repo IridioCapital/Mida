@@ -42,6 +42,7 @@
     * [Trading systems](#trading-systems)
     * [Paper trading and backtesting](#paper-trading-and-backtesting)
     * [Technical indicators](#technical-indicators)
+* [Why JavaScript/TypeScript?](#why-javascripttypescript)
 * [License and disclaimer](#license-and-disclaimer)
 * [Contributors](#contributors)
 
@@ -101,7 +102,7 @@ const myAccount = await login("Binance/Spot", {
 ```
 
 How to login into a Bybit Futures account,<br>
-Read [how to use Mida with Bybit](https://www.mida.org/posts/how-to-use-mida-with-bybit/) to
+read [how to use Mida with Bybit](https://www.mida.org/posts/how-to-use-mida-with-bybit/) to
 get your `apiKey` and `apiSecret` credentials.
 ```javascript
 import { login, } from "@reiryoku/mida";
@@ -113,7 +114,7 @@ const myAccount = await login("Bybit/Futures", {
 ```
 
 How to login into a cTrader account,
-Read [how to use Mida with cTrader](https://www.mida.org/posts/how-to-use-mida-with-ctrader/) to
+read [how to use Mida with cTrader](https://www.mida.org/posts/how-to-use-mida-with-ctrader/) to
 get your `clientId`, `clientSecret`, `accessToken` and `accountId` credentials.
 ```javascript
 import { login, } from "@reiryoku/mida";
@@ -648,6 +649,15 @@ const rsi = await Mida.createIndicator("RSI", { period: 14, }).calculate(closePr
 // Values are from oldest to newest
 log(rsi);
 ```
+
+## Why JavaScript/TypeScript?
+JavaScript/TypeScript is considered the ideal modern language for trading in the financial markets due to several key factors.
+First and foremost, its incredible networking capabilities make it well-suited for real-time data processing and communication,
+allowing traders to access and analyze market information swiftly. Additionally, JavaScript/TypeScript's event loop capacity
+enables efficient handling of asynchronous tasks, such as handling multiple market feeds and executing trades
+simultaneously. While languages like C++ or Rust may offer better performance in certain scenarios, JavaScript/TypeScript's
+versatility, ease of use, and extensive ecosystem of libraries and frameworks make it a preferred choice for developing sophisticated
+trading systems that require rapid development, scalability, and flexibility in the dynamic world of financial markets.
 
 ## License and disclaimer
 [LICENSE](./LICENSE)<br><br>

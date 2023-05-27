@@ -155,6 +155,8 @@ export { MidaOrderTimeInForce, } from "#orders/MidaOrderTimeInForce";
 
 export { composePeriods, MidaPeriod, } from "#periods/MidaPeriod";
 export { MidaPeriodParameters, } from "#periods/MidaPeriodParameters";
+export { MidaPeriodPriceKey, } from "#periods/MidaPeriodPriceKey";
+export { MidaPeriodUtilities, } from "#periods/MidaPeriodUtilities";
 
 export { MidaTradingPlatform, } from "#platforms/MidaTradingPlatform";
 export { MidaTradingPlatformParameters, } from "#platforms/MidaTradingPlatformParameters";

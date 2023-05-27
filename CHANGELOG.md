@@ -1,4 +1,5 @@
 ### Features
+* Core | Expose `MidaPeriodUtilities` and add `toRenko` function for converting periods to renko [#123](https://github.com/Reiryoku-Technologies/Mida/pull/123)
 * bitFlyer | Integrate bitFlyer Spot as "bitFlyer/Spot" [#119](https://github.com/Reiryoku-Technologies/Mida/pull/119)
 
 2023.5.0 - 18-05-2023
