@@ -68,7 +68,7 @@ export class MidaDecimal {
         return decimal(normalized.#toString(normalized.#value - decimal(operand).#value));
     }
 
-    public sub (operand: MidaDecimal): MidaDecimal {
+    public sub (operand: MidaDecimalConvertible): MidaDecimal {
         return this.subtract(operand);
     }
 
