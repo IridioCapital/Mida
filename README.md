@@ -55,6 +55,7 @@ applications depending on use cases.
 ### Languages
 Mida can be used with TypeScript and JavaScript on [Node.js](https://nodejs.org) and
 can be additionally enhanced through C++ or [AssemblyScript](https://www.assemblyscript.org) modules for near-native performance.
+[Why JavaScript/TypeScript?](#why-javascripttypescript)
 
 ### Platforms
 Mida is platform-neutral, this means that any trading platform could
