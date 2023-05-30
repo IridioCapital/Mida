@@ -1,3 +1,6 @@
+### Bug fixes
+* bitFlyer | Fix naming and imports [#125](https://github.com/Reiryoku-Technologies/Mida/pull/125)
+
 2023.6.0 - 30-05-2023
 ===================
 ### Features

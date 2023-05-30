@@ -25,7 +25,7 @@ import { WebSocket, } from "ws";
 
 const BITFLYER_WEB_SOCKET_URI: string = "wss://ws.lightstream.bitflyer.com/json-rpc";
 
-export async function createBitflyerPrivateWs (apiKey: string, apiSecret: string): Promise<WebSocket> {
+export async function createBitFlyerPrivateWs (apiKey: string, apiSecret: string): Promise<WebSocket> {
     const socket: WebSocket = new WebSocket(BITFLYER_WEB_SOCKET_URI);
     const timestamp: string = Date.now().toString();
     const nonce: string = crypto.randomBytes(16).toString("hex");

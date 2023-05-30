@@ -43,5 +43,5 @@ export { BitFlyerSpotLoginParameters, } from "!/src/platforms/bitflyer/spot/BitF
 
 export { BitFlyerAccountRegion, } from "!/src/platforms/bitflyer/BitFlyerAccountRegion";
 export { BitFlyerHttpClient, } from "!/src/platforms/bitflyer/BitFlyerHttpClient";
-export { createBitflyerPrivateWs, } from "!/src/platforms/bitflyer/BitFlyerWebSocket";
+export { createBitFlyerPrivateWs, } from "!/src/platforms/bitflyer/BitFlyerWebSocket";
 // </public-api>
