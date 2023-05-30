@@ -1,3 +1,5 @@
+2023.6.1 - 30-05-2023
+===================
 ### Bug fixes
 * bitFlyer | Fix naming and imports [#125](https://github.com/Reiryoku-Technologies/Mida/pull/125)
 
