@@ -42,10 +42,8 @@ export namespace MidaPeriodUtilities {
                 boxLow = pivotClose.sub(boxSize);
             }
             else {
-                boxHigh =
-                        renkoPivot.isBullish ? renkoPivot.high.add(boxSize) : renkoPivot.low.add(boxSize).add(boxSize);
-                boxLow =
-                        renkoPivot.isBearish ? renkoPivot.low.sub(boxSize) : renkoPivot.low.sub(boxSize).sub(boxSize);
+                boxHigh = renkoPivot.high.add(boxSize);
+                boxLow = renkoPivot.low.sub(boxSize);
             }
 
             let closedPrice: MidaDecimal | undefined;
