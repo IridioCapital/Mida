@@ -70,7 +70,7 @@ easily executed on different trading platforms.
 <br><br>
 
 #### Supported platforms
-| Name          | ID             | Trading                                  | Sign Up                                                             |
+| Name          | ID             | Trading                                  |                                                                     |
 |---------------|----------------|------------------------------------------|---------------------------------------------------------------------|
 | Binance Spot  | Binance/Spot   | Crypto Spot                              | [Sign Up](https://accounts.binance.com/en/register?ref=172142672)   |
 | cTrader       | cTrader        | Forex, Crypto, Stocks & Commodities CFDs | [Sign Up](https://www.mida.org/posts/how-to-use-mida-with-ctrader/) |
