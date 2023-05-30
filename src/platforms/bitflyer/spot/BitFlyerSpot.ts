@@ -29,7 +29,7 @@ import { decimal, } from "#decimals/MidaDecimal";
 import { MidaTradingPlatform, } from "#platforms/MidaTradingPlatform";
 import { BitFlyerAccountRegion, } from "!/src/platforms/bitflyer/BitFlyerAccountRegion";
 import { BitFlyerHttpClient, } from "!/src/platforms/bitflyer/BitFlyerHttpClient";
-import { createBitflyerPrivateWs, } from "!/src/platforms/bitflyer/BitflyerWebSocket";
+import { createBitFlyerPrivateWs, } from "!/src/platforms/bitflyer/BitFlyerWebSocket";
 import { BitFlyerSpotAccount, } from "!/src/platforms/bitflyer/spot/BitFlyerSpotAccount";
 import { BitFlyerSpotLoginParameters, } from "!/src/platforms/bitflyer/spot/BitFlyerSpotLoginParameters";
 
@@ -49,7 +49,7 @@ export class BitFlyerSpot extends MidaTradingPlatform {
         region = BitFlyerAccountRegion.EUROPE,
     }: BitFlyerSpotLoginParameters): Promise<any> {
         const httpClient: BitFlyerHttpClient = new BitFlyerHttpClient(apiKey, apiSecret);
-        const wsClient: WebSocket = await createBitflyerPrivateWs(apiKey, apiSecret);
+        const wsClient: WebSocket = await createBitFlyerPrivateWs(apiKey, apiSecret);
         let primaryAsset;
 
         switch (region) {
