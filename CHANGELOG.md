@@ -1,3 +1,8 @@
+## Features
+### Platforms
+* cTrader | Add `digits` in `MidaSymbol` [#126](https://github.com/Reiryoku-Technologies/Mida/pull/126)
+* cTrader | Expose socket client as `client` in `CTraderAccount` [#126](https://github.com/Reiryoku-Technologies/Mida/pull/126)
+
 2023.6.1 - 30-05-2023
 ===================
 ### Bug fixes

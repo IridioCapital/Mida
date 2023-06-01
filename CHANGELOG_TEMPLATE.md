@@ -1,0 +1,9 @@
+## Features | Bug fixes
+### Core
+* ...
+
+### Platforms
+* {PLATFORM_NAME} | ...
+
+### Indicators
+* {INDICATOR_NAME} | ...
