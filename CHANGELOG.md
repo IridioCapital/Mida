@@ -3,6 +3,10 @@
 * cTrader | Add `digits` in `MidaSymbol` [#126](https://github.com/Reiryoku-Technologies/Mida/pull/126)
 * cTrader | Expose socket client as `client` in `CTraderAccount` [#126](https://github.com/Reiryoku-Technologies/Mida/pull/126)
 
+## Bug fixes
+### Platforms
+* cTrader | Fix `getUnrealizedGrossProfit()` profit calculation [#128](https://github.com/Reiryoku-Technologies/Mida/pull/128), [#34](https://github.com/Reiryoku-Technologies/Mida/issues/34)
+
 ## Project
 * Create `examples` directory with usage examples [#127](https://github.com/Reiryoku-Technologies/Mida/pull/127)
 
