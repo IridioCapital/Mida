@@ -1,4 +1,4 @@
-## Features | Bug fixes
+## Features | Bug fixes | Project
 ### Core
 * ...
 
