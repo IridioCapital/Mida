@@ -1,3 +1,5 @@
+2023.7.0 - 02-06-2023
+===================
 ## Features
 #### Platforms
 * cTrader | Add `digits` in `MidaSymbol` [#126](https://github.com/Reiryoku-Technologies/Mida/pull/126)
