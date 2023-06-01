@@ -1,5 +1,5 @@
 ## Features
-### Platforms
+#### Platforms
 * cTrader | Add `digits` in `MidaSymbol` [#126](https://github.com/Reiryoku-Technologies/Mida/pull/126)
 * cTrader | Expose socket client as `client` in `CTraderAccount` [#126](https://github.com/Reiryoku-Technologies/Mida/pull/126)
 
