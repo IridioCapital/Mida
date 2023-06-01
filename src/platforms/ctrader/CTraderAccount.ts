@@ -1270,12 +1270,12 @@ export class CTraderAccount extends MidaTradingAccount {
         const symbol: string = plainSymbol?.symbolName;
 
         if (!plainSymbol) {
-            throw new Error();
+            throw new Error("Unknown position symbol");
         }
 
         const completePlainSymbol: Record<string, any> = this.#getCompletePlainSymbol(symbol);
-        const lotUnits: MidaDecimal = decimal(completePlainSymbol.lotSize).divide(100);
-        const volume: MidaDecimal = decimal(plainPosition.tradeData.volume).divide(100).divide(lotUnits);
+        const lotUnits: MidaDecimal = decimal(completePlainSymbol.lotSize).div(100);
+        const volume: MidaDecimal = decimal(plainPosition.tradeData.volume).div(100).div(lotUnits);
         const openPrice: MidaDecimal = decimal(plainPosition.price);
         const lastSymbolTick: MidaTick = await this.#getSymbolLastTick(symbol);
         let direction: MidaPositionDirection;
@@ -1302,10 +1302,10 @@ export class CTraderAccount extends MidaTradingAccount {
         let grossProfit: MidaDecimal;
 
         if (direction === MidaPositionDirection.LONG) {
-            grossProfit = closePrice.subtract(openPrice).multiply(volume).multiply(lotUnits);
+            grossProfit = closePrice.sub(openPrice).mul(volume).mul(lotUnits);
         }
         else {
-            grossProfit = openPrice.subtract(closePrice).multiply(volume).multiply(lotUnits);
+            grossProfit = openPrice.sub(closePrice).mul(volume).mul(lotUnits);
         }
 
         const quoteAssedId: string = plainSymbol.quoteAssetId.toString();
@@ -1314,14 +1314,14 @@ export class CTraderAccount extends MidaTradingAccount {
 
         // <rate-for-conversion-to-deposit-asset>
         if (quoteAssedId !== depositAssetId) {
-            let depositConversionChain: Record<string, any>[] = this.#depositConversionChains.get(symbol) ?? [];
+            let depositConversionChain: any = this.#depositConversionChains.get(symbol);
             let movedAssetId: string = quoteAssedId;
 
             if (!depositConversionChain) {
                 depositConversionChain = (await this.#sendCommand("ProtoOASymbolsForConversionReq", {
                     firstAssetId: quoteAssedId,
                     lastAssetId: depositAssetId,
-                })).symbol as Record<string, any>[];
+                })).symbol;
 
                 this.#depositConversionChains.set(symbol, depositConversionChain);
             }
@@ -1331,11 +1331,11 @@ export class CTraderAccount extends MidaTradingAccount {
                 const supposedClosePrice: MidaDecimal = lastLightSymbolTick.ask;
 
                 if (plainLightSymbol.baseAssetId.toString() === movedAssetId) {
-                    depositExchangeRate = depositExchangeRate.multiply(supposedClosePrice);
+                    depositExchangeRate = depositExchangeRate.mul(supposedClosePrice);
                     movedAssetId = plainLightSymbol.quoteAssetId.toString();
                 }
                 else {
-                    depositExchangeRate = depositExchangeRate.multiply(decimal(1).divide(supposedClosePrice));
+                    depositExchangeRate = depositExchangeRate.mul(decimal(1).div(supposedClosePrice));
                     movedAssetId = plainLightSymbol.baseAssetId.toString();
                 }
             }
@@ -1343,7 +1343,7 @@ export class CTraderAccount extends MidaTradingAccount {
         // </rate-for-converion-to-deposit-asset>
 
         // Return the gross profit converted to deposit asset
-        return grossProfit.multiply(depositExchangeRate);
+        return grossProfit.mul(depositExchangeRate);
     }
 
     public async getPlainPositionNetProfit (plainPosition: Record<string, any>): Promise<MidaDecimal> {
