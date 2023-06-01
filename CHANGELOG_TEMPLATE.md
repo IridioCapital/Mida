@@ -1,9 +1,9 @@
 ## Features | Bug fixes | Project
-### Core
+#### Core
 * ...
 
-### Platforms
+#### Platforms
 * {PLATFORM_NAME} | ...
 
-### Indicators
+#### Indicators
 * {INDICATOR_NAME} | ...

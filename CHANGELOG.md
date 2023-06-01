@@ -4,7 +4,7 @@
 * cTrader | Expose socket client as `client` in `CTraderAccount` [#126](https://github.com/Reiryoku-Technologies/Mida/pull/126)
 
 ## Bug fixes
-### Platforms
+#### Platforms
 * cTrader | Fix `getUnrealizedGrossProfit()` profit calculation [#128](https://github.com/Reiryoku-Technologies/Mida/pull/128), [#34](https://github.com/Reiryoku-Technologies/Mida/issues/34)
 
 ## Project
