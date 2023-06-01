@@ -133,6 +133,10 @@ export class CTraderAccount extends MidaTradingAccount {
         return this.#brokerName;
     }
 
+    public get client (): CTraderConnection {
+        return this.#connection;
+    }
+
     public get plainOpenPositions (): Record<string, any>[] {
         const plainOpenPositions: Record<string, any>[] = [];
 
@@ -178,7 +182,6 @@ export class CTraderAccount extends MidaTradingAccount {
     }
 
     public override async getEquity (): Promise<MidaDecimal> {
-
         const unrealizedNetProfits: MidaDecimal[] =
             // eslint-disable-next-line max-len
             await Promise.all(this.plainOpenPositions.map((plainOpenPosition: Record<string, any>) => this.getPlainPositionNetProfit(plainOpenPosition)));
@@ -215,40 +218,39 @@ export class CTraderAccount extends MidaTradingAccount {
         return false;
     }
 
+    // https://help.ctrader.com/open-api/messages/#protooagettrendbarsreq
     public override async getSymbolPeriods (symbol: string, timeframe: MidaTimeframe): Promise<MidaPeriod[]> {
-        const W1: number = MidaTimeframe.toSeconds("W1") as number * 1000;
+        const oneWeekMs: number = MidaTimeframe.toSeconds("W1") as number * 1000;
         const now: number = Date.now();
-        const stringTimeframe: string = timeframe;
-        let from = now - W1;
+        let from = now - oneWeekMs;
 
-        // https://help.ctrader.com/open-api/messages/#protooagettrendbarsreq
         if (
-            stringTimeframe === "M1"
-            || stringTimeframe === "M2"
-            || stringTimeframe === "M3"
-            || stringTimeframe === "M4"
-            || stringTimeframe === "M5"
+            timeframe === MidaTimeframe.M1
+            || timeframe === MidaTimeframe.M2
+            || timeframe === MidaTimeframe.M3
+            || timeframe === MidaTimeframe.M4
+            || timeframe === MidaTimeframe.M5
         ) {
-            from = now - W1 * 5;
+            from = now - oneWeekMs * 5;
         }
         else if (
-            stringTimeframe === "M10"
-            || stringTimeframe === "M15"
-            || stringTimeframe === "M30"
-            || stringTimeframe === "H1"
+            timeframe === MidaTimeframe.M10
+            || timeframe === MidaTimeframe.M15
+            || timeframe === MidaTimeframe.M30
+            || timeframe === MidaTimeframe.H1
         ) {
-            from = now - W1 * 35;
+            from = now - oneWeekMs * 35;
         }
         else if (
-            stringTimeframe === "H4"
-            || stringTimeframe === "H12"
-            || stringTimeframe === "D1"
+            timeframe === MidaTimeframe.H4
+            || timeframe === MidaTimeframe.H12
+            || timeframe === MidaTimeframe.D1
         ) {
             from = now - 31622400000;
         }
         else if (
-            stringTimeframe === "W1"
-            || stringTimeframe === "MO1"
+            timeframe === MidaTimeframe.W1
+            || timeframe === MidaTimeframe.MO1
         ) {
             from = now - 158112000000;
         }
@@ -263,9 +265,13 @@ export class CTraderAccount extends MidaTradingAccount {
             count: 4000,
         })).trendbar;
 
-        return cTraderPeriods
-            .map((period) => CTraderUtilities.normalizePeriod(period, symbol, undefined, timeframe))
-            .sort((a, b): number => a.startDate.timestamp - b.startDate.timestamp);
+        for (let i = 0, length = cTraderPeriods.length; i < length; ++i) {
+            cTraderPeriods[i] = CTraderUtilities.normalizePeriod(cTraderPeriods[i], symbol, undefined, timeframe);
+        }
+
+        cTraderPeriods.sort((a, b): number => a.startDate.timestamp - b.startDate.timestamp);
+
+        return cTraderPeriods;
     }
 
     public override async getSymbols (): Promise<string[]> {
@@ -279,9 +285,9 @@ export class CTraderAccount extends MidaTradingAccount {
     }
 
     public override async getSymbol (symbol: string): Promise<MidaSymbol | undefined> {
-        const plainSymbol: Record<string, any> | undefined = this.#cTraderSymbols.get(symbol);
+        const cTraderSymbol: any = this.#cTraderSymbols.get(symbol);
 
-        if (!plainSymbol) {
+        if (!cTraderSymbol) {
             return undefined;
         }
 
@@ -291,20 +297,20 @@ export class CTraderAccount extends MidaTradingAccount {
             return normalizedSymbol;
         }
 
-        const completePlainSymbol: Record<string, any> = this.#getCompletePlainSymbol(symbol);
-        const lotUnits: MidaDecimal = decimal(completePlainSymbol.lotSize).divide(100);
+        const completeCTraderSymbol: any = this.#getCompletePlainSymbol(symbol);
+        const lotUnits: MidaDecimal = decimal(completeCTraderSymbol.lotSize).divide(100);
         normalizedSymbol = new MidaSymbol({
             symbol,
             tradingAccount: this,
-            description: plainSymbol.description,
-            baseAsset: this.getAssetById(plainSymbol.baseAssetId)?.toString() as string,
-            quoteAsset: this.getAssetById(plainSymbol.quoteAssetId)?.toString() as string,
-            leverage: decimal(-1), // TODO: Add leverage
-            minLots: decimal(completePlainSymbol.minVolume).divide(lotUnits).divide(100),
-            maxLots: decimal(completePlainSymbol.maxVolume).divide(lotUnits).divide(100),
+            description: cTraderSymbol.description,
+            baseAsset: this.getAssetById(cTraderSymbol.baseAssetId)?.toString() as string,
+            quoteAsset: this.getAssetById(cTraderSymbol.quoteAssetId)?.toString() as string,
+            leverage: decimal(-1),
+            minLots: decimal(completeCTraderSymbol.minVolume).divide(lotUnits).divide(100),
+            maxLots: decimal(completeCTraderSymbol.maxVolume).divide(lotUnits).divide(100),
             lotUnits,
-            pipPosition: Number(completePlainSymbol.pipPosition),
-            digits: 2, // TODO: todo
+            pipPosition: completeCTraderSymbol.pipPosition,
+            digits: completeCTraderSymbol.digits,
         });
 
         this.#symbols.set(symbol, normalizedSymbol);
