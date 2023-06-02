@@ -75,7 +75,7 @@ to get help you with your first steps.
 
 ## Installation
 Mida is distributed on [npm](https://www.npmjs.com).
-```bash
+```console
 npm install @reiryoku/mida
 ```
 
