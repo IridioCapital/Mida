@@ -69,15 +69,6 @@ easily executed on different trading platforms.
 </p>
 <br><br>
 
-#### Supported platforms
-| Name          | ID             | Trading                                  |                                                                     |
-|---------------|----------------|------------------------------------------|---------------------------------------------------------------------|
-| Binance Spot  | Binance/Spot   | Crypto Spot                              | [Sign Up](https://accounts.binance.com/en/register?ref=172142672)   |
-| cTrader       | cTrader        | Forex, Crypto, Stocks & Commodities CFDs | [Sign Up](https://www.mida.org/posts/how-to-use-mida-with-ctrader/) |
-| Bybit Spot    | Bybit/Spot     | Crypto Spot                              | [Sign Up](https://www.bybit.com/invite?ref=JN5XQR)                  |
-| Bybit Futures | Bybit/Futures  | Crypto Futures                           | [Sign Up](https://www.bybit.com/invite?ref=JN5XQR)                  |
-| bitFlyer      | bitFlyer/Spot  | Crypto Spot                              | [Sign Up](https://bitflyer.com/invitation?id=ntcerzci&lang=en-GB)   |
-
 ### Community
 Join the community on [Discord](https://discord.gg/cKyWTUsr3q) and [Telegram](https://t.me/joinmida)
 to get help you with your first steps.
