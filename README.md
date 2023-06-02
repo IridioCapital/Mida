@@ -74,7 +74,7 @@ Join the community on [Discord](https://discord.gg/cKyWTUsr3q) and [Telegram](ht
 to get help you with your first steps.
 
 ## Installation
-Mida is distributed on [npm](https://www.npmjs.com).
+Mida is distributed on [npm](https://www.npmjs.com/package/@reiryoku/mida).
 ```console
 npm install @reiryoku/mida
 ```
