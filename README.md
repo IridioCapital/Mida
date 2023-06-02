@@ -105,7 +105,7 @@ const myAccount = await login("Bybit/Futures", {
 });
 ```
 
-How to login into a cTrader account,
+How to login into a cTrader account,<br>
 read [how to use Mida with cTrader](https://www.mida.org/posts/how-to-use-mida-with-ctrader/) to
 get your `clientId`, `clientSecret`, `accessToken` and `accountId` credentials.
 ```javascript
