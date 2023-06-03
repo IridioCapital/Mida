@@ -50,10 +50,9 @@
 Mida is an open-source and cross-platform trading framework developed by Reiryoku Technologies and its contributors.
 Designed from the ground up to provide a solid, versatile and platform-neutral
 environment for creating algorithmic trading systems, indicators, market analysis tools or just trading
-applications depending on use cases.
-<br><br>
+applications depending on use cases.<br>
 
-**Do you want to honour our efforts? If you want, you can leave a star on GitHub ⭐️, thank you!**
+**Would you like to honor our efforts? If so, you can leave a star on GitHub ⭐. Thank you!**
 
 ### Languages
 Mida can be used with TypeScript and JavaScript on [Node.js](https://nodejs.org) and
