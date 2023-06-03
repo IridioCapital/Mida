@@ -5,7 +5,7 @@
 </p>
 <br>
 <p align="center">
-    <b>The open-source and cross-platform trading framework</b>
+    <b>The open-source and cross-platform trading framework 📈</b>
     <br><br>
     <a href="https://www.mida.org">Home</a> &mdash;
     <a href="https://www.mida.org/documentation">Documentation</a> &mdash;
@@ -51,6 +51,9 @@ Mida is an open-source and cross-platform trading framework developed by Reiryok
 Designed from the ground up to provide a solid, versatile and platform-neutral
 environment for creating algorithmic trading systems, indicators, market analysis tools or just trading
 applications depending on use cases.
+<br><br>
+
+**Do you want to honour our efforts? If you want, you can leave a star on GitHub ⭐️, thank you!**
 
 ### Languages
 Mida can be used with TypeScript and JavaScript on [Node.js](https://nodejs.org) and
