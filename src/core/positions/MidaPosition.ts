@@ -42,6 +42,7 @@ export abstract class MidaPosition {
     readonly #symbol: string;
     #volume: MidaDecimal;
     #direction?: MidaPositionDirection;
+    #entryPrice?: MidaDecimal;
     readonly #protection: MidaProtection;
     readonly #emitter: MidaEmitter;
 
@@ -51,6 +52,7 @@ export abstract class MidaPosition {
         symbol,
         volume,
         direction,
+        entryPrice,
         protection,
     }: MidaPositionParameters) {
         this.#id = id;
@@ -58,6 +60,7 @@ export abstract class MidaPosition {
         this.#symbol = symbol;
         this.#volume = volume;
         this.#direction = direction;
+        this.#entryPrice = entryPrice;
         this.#protection = protection ?? {};
         this.#emitter = new MidaEmitter();
     }
@@ -80,6 +83,10 @@ export abstract class MidaPosition {
 
     public get direction (): MidaPositionDirection | undefined {
         return this.#direction;
+    }
+
+    public get entryPrice (): MidaDecimal | undefined {
+        return this.#entryPrice;
     }
 
     public get protection (): MidaProtection {
@@ -121,7 +128,7 @@ export abstract class MidaPosition {
     public abstract subtractVolume (volume: MidaDecimalConvertible): Promise<MidaOrder>;
 
     public async reverse (): Promise<MidaOrder> {
-        return this.subtractVolume(this.volume.multiply(2));
+        return this.subtractVolume(this.volume.mul(2));
     }
 
     public async close (): Promise<MidaOrder> {
@@ -159,6 +166,10 @@ export abstract class MidaPosition {
     }
 
     /* *** *** *** Reiryoku Technologies *** *** *** */
+
+    protected onEntryPriceUpdate (entryPrice?: MidaDecimal): void {
+        this.#entryPrice = entryPrice === undefined ? undefined : decimal(entryPrice);
+    }
 
     protected onTrade (trade: MidaTrade): void {
         const volume: MidaDecimal = trade.volume;

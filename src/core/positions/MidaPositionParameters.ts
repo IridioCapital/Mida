@@ -36,5 +36,6 @@ export type MidaPositionParameters = {
     symbol: string;
     volume: MidaDecimal;
     direction?: MidaPositionDirection;
+    entryPrice?: MidaDecimal;
     protection?: MidaProtection;
 };

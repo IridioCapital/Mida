@@ -51,7 +51,7 @@ import { MidaTradePurpose, } from "#trades/MidaTradePurpose";
 import { MidaTradeRejection, } from "#trades/MidaTradeRejection";
 import { MidaTradeStatus, } from "#trades/MidaTradeStatus";
 import { MidaEmitter, } from "#utilities/emitters/MidaEmitter";
-import { uuid, } from "#utilities/MidaUtilities";
+import { createOrderResolver, uuid, } from "#utilities/MidaUtilities";
 import { CTraderAccountParameters, } from "!/src/platforms/ctrader/CTraderAccountParameters";
 import { CTraderOrder, } from "!/src/platforms/ctrader/orders/CTraderOrder";
 import { CTraderPosition, } from "!/src/platforms/ctrader/positions/CTraderPosition";
@@ -579,6 +579,7 @@ export class CTraderAccount extends MidaTradingAccount {
         const completePlainSymbol: Record<string, any> = this.#getCompletePlainSymbol(symbol);
         const lotUnits: MidaDecimal = decimal(completePlainSymbol.lotSize).divide(100);
         const volume: MidaDecimal = decimal(position.tradeData.volume).divide(lotUnits).divide(100);
+        const entryPrice: MidaDecimal | undefined = volume.eq(0) ? undefined : decimal(position.price);
 
         return new CTraderPosition({
             id: position.positionId.toString(),
@@ -591,6 +592,7 @@ export class CTraderAccount extends MidaTradingAccount {
                 trailingStopLoss: position.trailingStopLoss,
             }),
             direction: position.tradeData.tradeSide === "BUY" ? MidaPositionDirection.LONG : MidaPositionDirection.SHORT,
+            entryPrice,
             connection: this.#connection,
             cTraderEmitter: this.#cTraderEmitter,
         });
@@ -722,8 +724,8 @@ export class CTraderAccount extends MidaTradingAccount {
 
         const plainSymbol: Record<string, any> = this.#cTraderSymbols.get(symbol) as Record<string, any>;
         const completePlainSymbol: Record<string, any> = this.#getCompletePlainSymbol(symbol);
-        const lotUnits: MidaDecimal = decimal(completePlainSymbol.lotSize).divide(100);
-        const normalizedVolume: MidaDecimal = requestedVolume.multiply(lotUnits).multiply(100);
+        const lotUnits: MidaDecimal = decimal(completePlainSymbol.lotSize).div(100);
+        const normalizedVolume: MidaDecimal = requestedVolume.mul(lotUnits).mul(100);
 
         requestDirectives = {
             symbolId: plainSymbol.symbolId.toString(),
@@ -757,11 +759,11 @@ export class CTraderAccount extends MidaTradingAccount {
 
             if (limitPrice) {
                 requestDirectives.orderType = "LIMIT";
-                requestDirectives.limitPrice = Number(limitPrice.toString());
+                requestDirectives.limitPrice = limitPrice.toNumber();
             }
             else if (stopPrice) {
                 requestDirectives.orderType = "STOP";
-                requestDirectives.stopPrice = Number(stopPrice.toString());
+                requestDirectives.stopPrice = stopPrice.toNumber();
             }
             else {
                 requestDirectives.orderType = "MARKET";
@@ -771,11 +773,11 @@ export class CTraderAccount extends MidaTradingAccount {
             // Protection is set on market orders after the order is executed
             if (requestDirectives.orderType !== "MARKET") {
                 if (stopLoss !== undefined) {
-                    requestDirectives.stopLoss = Number(decimal(stopLoss).toString());
+                    requestDirectives.stopLoss = decimal(stopLoss).toNumber();
                 }
 
                 if (takeProfit !== undefined) {
-                    requestDirectives.takeProfit = Number(decimal(takeProfit).toString());
+                    requestDirectives.takeProfit = decimal(takeProfit).toNumber();
                 }
 
                 if (trailingStopLoss) {
@@ -788,33 +790,8 @@ export class CTraderAccount extends MidaTradingAccount {
             requestDirectives.orderType = "MARKET";
         }
 
-        const resolverEvents: string[] = directives.resolverEvents ?? [
-            "reject",
-            "pending",
-            "cancel",
-            "expire",
-            "execute",
-        ];
-        const resolver: Promise<CTraderOrder> = new Promise((resolve: (order: CTraderOrder) => void) => {
-            if (resolverEvents.length === 0) {
-                resolve(order);
-            }
-            else {
-                const resolverEventsUuids: Map<string, string> = new Map();
-
-                for (const eventType of resolverEvents) {
-                    resolverEventsUuids.set(eventType, order.on(eventType, (): void => {
-                        for (const uuid of [ ...resolverEventsUuids.values(), ]) {
-                            order.removeEventListener(uuid);
-                        }
-
-                        resolve(order);
-                    }));
-                }
-            }
-        });
-
-        const listeners: { [eventType: string]: MidaEventListener } = directives.listeners ?? {};
+        const resolver: Promise<CTraderOrder> = createOrderResolver(order, directives.resolverEvents) as Promise<CTraderOrder>;
+        const listeners: Record<string, MidaEventListener> = directives.listeners ?? {};
 
         for (const eventType of Object.keys(listeners)) {
             order.on(eventType, listeners[eventType]);
