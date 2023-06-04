@@ -1,3 +1,10 @@
+## Features
+#### Core
+* Add `entryPrice` in `MidaPosition` to represent the position open price [#129](https://github.com/Reiryoku-Technologies/Mida/pull/129)
+
+#### Platforms
+* cTrader | Add `entryPrice` support [#129](https://github.com/Reiryoku-Technologies/Mida/pull/129)
+
 2023.7.0 - 02-06-2023
 ===================
 ## Features

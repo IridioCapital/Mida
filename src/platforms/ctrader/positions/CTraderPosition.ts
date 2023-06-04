@@ -50,6 +50,7 @@ export class CTraderPosition extends MidaPosition {
         tradingAccount,
         volume,
         direction,
+        entryPrice,
         protection,
         connection,
         cTraderEmitter,
@@ -59,6 +60,7 @@ export class CTraderPosition extends MidaPosition {
             symbol,
             volume,
             direction,
+            entryPrice,
             tradingAccount,
             protection,
         });
@@ -165,8 +167,8 @@ export class CTraderPosition extends MidaPosition {
     }
 
     #onUpdate (descriptor: GenericObject): void {
-        const plainOrder: GenericObject = descriptor.order;
-        const positionId: string = plainOrder?.positionId?.toString();
+        const cTraderOrder: GenericObject = descriptor.order;
+        const positionId: string = cTraderOrder?.positionId?.toString();
         const messageId: string = descriptor.clientMsgId;
 
         if (positionId && positionId === this.id) {
@@ -180,7 +182,7 @@ export class CTraderPosition extends MidaPosition {
                 case "ORDER_ACCEPTED":
                 case "ORDER_CANCELLED":
                 case "ORDER_REPLACED": {
-                    if (plainOrder.orderType === "STOP_LOSS_TAKE_PROFIT") {
+                    if (cTraderOrder.orderType === "STOP_LOSS_TAKE_PROFIT") {
                         this.onProtectionChange(this.tradingAccount.normalizeProtection(descriptor.position));
 
                         const protectionChangeRequest: any[] | undefined = this.#protectionChangeRequests.get(messageId);
@@ -197,6 +199,9 @@ export class CTraderPosition extends MidaPosition {
                 }
                 case "ORDER_PARTIAL_FILL":
                 case "ORDER_FILLED": {
+                    const position: any = descriptor.position;
+
+                    this.onEntryPriceUpdate(position.positionStatus === "POSITION_STATUS_OPEN" ? position.price : undefined);
                     this.onTrade(this.tradingAccount.normalizeTrade(descriptor.deal));
 
                     break;
@@ -204,7 +209,7 @@ export class CTraderPosition extends MidaPosition {
             }
         }
 
-        if (descriptor?.position?.positionStatus.toUpperCase() === "POSITION_STATUS_CLOSED") {
+        if (descriptor?.position?.positionStatus === "POSITION_STATUS_CLOSED") {
             this.#removeEventsListeners();
         }
     }
