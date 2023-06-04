@@ -144,22 +144,13 @@ log(await myAccount.getUsedMargin());
 ### Orders, trades and positions
 How top open a long position for BTC/USDT.
 ```javascript
-import { log, MidaOrderDirection, } from "@reiryoku/mida";
+import { MidaOrderDirection, } from "@reiryoku/mida";
 
 const myOrder = await myAccount.placeOrder({
     symbol: "BTCUSDT",
     direction: MidaOrderDirection.BUY,
     volume: 1,
 });
-
-log(myOrder.id);
-log(myOrder.executionPrice);
-log(myOrder.filledVolume);
-log(myOrder.trades);
-
-const myPosition = await order.getPosition();
-
-log(myPosition);
 ```
 
 How to open a short position for EUR/USD.
