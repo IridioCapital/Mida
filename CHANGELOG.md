@@ -1,3 +1,5 @@
+2023.8.0 - 05-06-2023
+===================
 ## Features
 #### Core
 * Add `entryPrice` in `MidaPosition` to represent the position open price [#129](https://github.com/Reiryoku-Technologies/Mida/pull/129)
@@ -18,6 +20,9 @@
 
 ## Project
 * Create `examples` directory with usage examples [#127](https://github.com/Reiryoku-Technologies/Mida/pull/127)
+
+<details>
+<summary>Older versions</summary>
 
 2023.6.1 - 30-05-2023
 ===================
@@ -242,3 +247,5 @@
 
 1.0.0 - 09-05-2021
 ===================
+
+</details>
