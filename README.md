@@ -271,11 +271,6 @@ await myPosition.changeProtection({
 });
 ```
 
-References:
-- [MidaOrder API](https://www.mida.org/documentation/orders/order.html)
-- [MidaTrade API](https://www.mida.org/documentation/trades/trade.html)
-- [MidaPosition API](https://www.mida.org/documentation/positions/position.html)
-
 </details>
 
 ### Decimals
