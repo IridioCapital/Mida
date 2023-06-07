@@ -192,7 +192,7 @@ export class MidaMarketComponentOracle extends MidaTradingSystem {
             let indicatorInput: any = [];
 
             if (typeof processor === "function") {
-                indicatorInput = await processor(cappedPeriods);
+                indicatorInput = await processor.call(state, cappedPeriods);
             }
             else if (Array.isArray(priceKeys)) {
                 for (const priceKey of priceKeys) {
