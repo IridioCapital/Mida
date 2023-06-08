@@ -1,3 +1,5 @@
+2023.8.1 - 08-06-2023
+===================
 ## Bug fixes
 #### Core
 * Set `this` as current state in market components indicators processors [#131](https://github.com/Reiryoku-Technologies/Mida/pull/131)
