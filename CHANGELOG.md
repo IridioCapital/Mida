@@ -1,6 +1,9 @@
-## Features
+## Bug fixes
 #### Core
 * Set `this` as current state in market components indicators processors [#131](https://github.com/Reiryoku-Technologies/Mida/pull/131)
+
+#### Platforms
+* Playground | Register `Mida/Playground` platform [#133](https://github.com/Reiryoku-Technologies/Mida/pull/133)
 
 2023.8.0 - 05-06-2023
 ===================
