@@ -619,7 +619,7 @@ export class MidaPlaygroundEngine {
         const account: MidaPlaygroundAccount = new MidaPlaygroundAccount({
             id,
             ownerName: configuration.ownerName ?? "",
-            platform: {} as MidaPlayground,
+            platform: MidaPlayground.instance,
             primaryAsset: configuration.primaryAsset ?? "USD",
             engine: this,
         });

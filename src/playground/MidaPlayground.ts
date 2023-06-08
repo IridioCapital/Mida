@@ -20,9 +20,10 @@
  * THE SOFTWARE.
 */
 
-import { MidaPlaygroundAccount, } from "!/src/playground/accounts/MidaPlaygroundAccount";
 import { logger, } from "#loggers/MidaLogger";
 import { MidaTradingPlatform, } from "#platforms/MidaTradingPlatform";
+import { baseActions, } from "#plugins/MidaPluginActions";
+import { MidaPlaygroundAccount, } from "!/src/playground/accounts/MidaPlaygroundAccount";
 
 class MidaPlayground extends MidaTradingPlatform {
     public constructor () {
@@ -47,7 +48,12 @@ class MidaPlayground extends MidaTradingPlatform {
 
     /* *** *** *** Reiryoku Technologies *** *** *** */
 
+    static readonly #instance: MidaPlayground = new MidaPlayground();
     static readonly #tradingAccounts: Map<string, MidaPlaygroundAccount> = new Map();
+
+    public static get instance (): MidaPlayground {
+        return this.#instance;
+    }
 
     public static addTradingAccount (id: string, tradingAccount: MidaPlaygroundAccount): void {
         if (MidaPlayground.#tradingAccounts.has(id)) {
@@ -60,6 +66,7 @@ class MidaPlayground extends MidaTradingPlatform {
     }
 }
 
+baseActions.addPlatform("Mida/Playground", MidaPlayground.instance);
 
 // <public-api>
 export { MidaPlayground, };
