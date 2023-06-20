@@ -56,7 +56,7 @@ applications depending on use cases.<br>
 
 ### Languages
 Mida is used with JavaScript/TypeScript on [Node.js](https://nodejs.org) and
-can be additionally enhanced through C++.
+can be additionally enhanced through C++.<br>
 [Why JavaScript/TypeScript?](#why-javascripttypescript)
 
 ### Platforms
