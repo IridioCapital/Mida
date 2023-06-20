@@ -55,8 +55,8 @@ applications depending on use cases.<br>
 **Would you like to honor our efforts? If so, you can leave a star on GitHub :star:. Thank you!**
 
 ### Languages
-Mida can be used with TypeScript and JavaScript on [Node.js](https://nodejs.org) and
-can be additionally enhanced through C++ or [AssemblyScript](https://www.assemblyscript.org) modules for near-native performance.
+Mida is used with JavaScript/TypeScript on [Node.js](https://nodejs.org) and
+can be additionally enhanced through C++.
 [Why JavaScript/TypeScript?](#why-javascripttypescript)
 
 ### Platforms
@@ -645,13 +645,24 @@ log(rsi);
 ```
 
 ## Why JavaScript/TypeScript?
-JavaScript/TypeScript is considered the ideal modern language for trading in the financial markets due to several key factors.
-First and foremost, its incredible networking capabilities make it well-suited for real-time data processing and communication,
-allowing traders to access and analyze market information swiftly. Additionally, JavaScript/TypeScript's event loop capacity
-enables efficient handling of asynchronous tasks, such as handling multiple market feeds and executing trades
-simultaneously. While languages like C++ or Rust may offer better performance in certain scenarios, JavaScript/TypeScript's
-versatility, ease of use, and extensive ecosystem of libraries and frameworks make it a preferred choice for developing sophisticated
-trading systems that require rapid development, scalability, and flexibility in the dynamic world of financial markets.
+At Reiryoku Technologies we hold the firm belief that JavaScript/TypeScript is the optimal choice for
+algorithmic trading in financial markets, due to several key factors:
+
+Firstly, the language's easy learning curve empowers traders to focus on developing effective strategies
+without being encumbered by intricate technicalities such as memory management. This streamlined learning
+experience accelerates the deployment of trading algorithms, enabling market participants to swiftly adapt
+to dynamic market conditions.
+
+Secondly, JavaScript/TypeScript excels in managing networking capabilities and handling asynchronous tasks,
+making it a formidable choice for algorithmic trading. Its robust networking capabilities facilitate
+real-time data processing and seamless communication, allowing traders to swiftly access and analyze market information.
+The language's efficient handling of asynchronous tasks enables simultaneous management of multiple market feeds,
+execution of trades, and response to market events, ensuring optimal performance and responsiveness.
+
+Finally, we designed Mida in manner to incorporate C++, offering the flexibility for traders to develop
+C++ functions specifically tailored for super CPU-intensive tasks. This integration of C++ allows for enhanced
+performance optimization while combining the strengths of JavaScript/TypeScript for rapid development
+and strategy-focused programming.
 
 ## License and disclaimer
 [LICENSE](./LICENSE)<br><br>
