@@ -20,9 +20,9 @@
  * THE SOFTWARE.
 */
 
-import { MidaBacktestSymbolDirectives, } from "!/src/playground/backtests/MidaBacktestSymbolDirectives";
 import { MidaDateConvertible, } from "#dates/MidaDateConvertible";
 import { MidaDecimalConvertible, } from "#decimals/MidaDecimalConvertible";
+import { MidaBacktestSymbolDirectives, } from "!/src/playground/backtests/MidaBacktestSymbolDirectives";
 
 export type MidaBacktestDirectives = {
     from: MidaDateConvertible;

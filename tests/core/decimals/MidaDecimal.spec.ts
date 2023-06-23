@@ -22,6 +22,7 @@
 
 import { decimal, MidaDecimal, } from "#decimals/MidaDecimal";
 
+// eslint-disable-next-line max-lines-per-function
 describe("MidaDecimal", () => {
     describe(".add", () => {
         it("returns the expected values", async () => {
@@ -31,6 +32,18 @@ describe("MidaDecimal", () => {
             expect(decimal(-0.02).add(-0.02).toString()).toBe("-0.04");
             expect(decimal(0.02).add(-0.02).toString()).toBe("0");
             expect(decimal(-0.02).add(0.02).toString()).toBe("0");
+        });
+    });
+
+    describe(".sub", () => {
+        it("returns the expected values", async () => {
+            expect(decimal(0).sub(50).toString()).toBe("-50");
+            expect(decimal(50).sub(-50).toString()).toBe("100");
+            expect(decimal(0.1).sub(0.2).toString()).toBe("-0.1");
+            expect(decimal(-0.02).sub(-0.02).toString()).toBe("0");
+            expect(decimal(0.02).sub(-0.02).toString()).toBe("0.04");
+            expect(decimal(-0.02).sub(0.02).toString()).toBe("-0.04");
+            expect(decimal(0.006).sub(0.002).add(0.002).toString()).toBe("0.006");
         });
     });
 
@@ -58,6 +71,20 @@ describe("MidaDecimal", () => {
                 0.4, 0.5, 0.6,
                 0.7, 0.8, 0.9
             ).toString()).toBe("0.9");
+        });
+    });
+
+    describe(".isZero", () => {
+        it("returns the expected values", async () => {
+            expect(decimal(0).isZero()).toBe(true);
+            expect(decimal(0.00).isZero()).toBe(true);
+            expect(decimal(0.000).isZero()).toBe(true);
+            expect(decimal("0").isZero()).toBe(true);
+            expect(decimal("0.00").isZero()).toBe(true);
+            expect(decimal("0.000").isZero()).toBe(true);
+            expect(decimal(decimal(0)).isZero()).toBe(true);
+            expect(decimal(decimal(0.00)).isZero()).toBe(true);
+            expect(decimal(decimal(0.000)).isZero()).toBe(true);
         });
     });
 });

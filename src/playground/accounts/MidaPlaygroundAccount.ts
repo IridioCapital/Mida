@@ -20,10 +20,6 @@
  * THE SOFTWARE.
 */
 
-import { MidaPlaygroundAccountParameters, } from "!/src/playground/accounts/MidaPlaygroundAccountParameters";
-import { MidaPlaygroundLatencyCustomizer, } from "!/src/playground/customizers/MidaPlaygroundLatencyCustomizer";
-import { MidaPlaygroundEngine, } from "!/src/playground/MidaPlaygroundEngine";
-import { MidaPlaygroundOrder, } from "!/src/playground/orders/MidaPlaygroundOrder";
 import { MidaTradingAccount, } from "#accounts/MidaTradingAccount";
 import { MidaTradingAccountOperativity, } from "#accounts/MidaTradingAccountOperativity";
 import { MidaTradingAccountPositionAccounting, } from "#accounts/MidaTradingAccountPositionAccounting";
@@ -45,6 +41,10 @@ import { MidaSymbolTradeStatus, } from "#symbols/MidaSymbolTradeStatus";
 import { MidaTick, } from "#ticks/MidaTick";
 import { MidaTimeframe, } from "#timeframes/MidaTimeframe";
 import { MidaTrade, } from "#trades/MidaTrade";
+import { MidaPlaygroundAccountParameters, } from "!/src/playground/accounts/MidaPlaygroundAccountParameters";
+import { MidaPlaygroundLatencyCustomizer, } from "!/src/playground/customizers/MidaPlaygroundLatencyCustomizer";
+import { MidaPlaygroundEngine, } from "!/src/playground/MidaPlaygroundEngine";
+import { MidaPlaygroundOrder, } from "!/src/playground/orders/MidaPlaygroundOrder";
 
 export class MidaPlaygroundAccount extends MidaTradingAccount {
     readonly #engine: MidaPlaygroundEngine;
@@ -64,7 +64,7 @@ export class MidaPlaygroundAccount extends MidaTradingAccount {
         super({
             id,
             platform,
-            creationDate: new MidaDate(),
+            creationDate: date(),
             primaryAsset,
             operativity: MidaTradingAccountOperativity.DEMO,
             positionAccounting: MidaTradingAccountPositionAccounting.HEDGED,
@@ -160,7 +160,7 @@ export class MidaPlaygroundAccount extends MidaTradingAccount {
 
             try {
                 const bid: MidaDecimal = await this.getSymbolBid(symbol);
-                const profit: MidaDecimal = bid.multiply(assetStatement.freeVolume);
+                const profit: MidaDecimal = bid.mul(assetStatement.freeVolume);
 
                 equity = equity.add(profit);
             }

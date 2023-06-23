@@ -20,18 +20,16 @@
  * THE SOFTWARE.
 */
 
-import { MidaPlaygroundAccount, } from "!/src/playground/accounts/MidaPlaygroundAccount";
-import { MidaPlaygroundOrderParameters, } from "!/src/playground/orders/MidaPlaygroundOrderParameters";
 import { MidaEvent, } from "#events/MidaEvent";
 import { MidaOrder, } from "#orders/MidaOrder";
 import { MidaOrderStatus, } from "#orders/MidaOrderStatus";
-import { MidaProtectionDirectives, } from "#protections/MidaProtectionDirectives";
 import { MidaTrade, } from "#trades/MidaTrade";
 import { MidaEmitter, } from "#utilities/emitters/MidaEmitter";
+import { MidaPlaygroundAccount, } from "!/src/playground/accounts/MidaPlaygroundAccount";
+import { MidaPlaygroundOrderParameters, } from "!/src/playground/orders/MidaPlaygroundOrderParameters";
 
 export class MidaPlaygroundOrder extends MidaOrder {
     readonly #engineEmitter: MidaEmitter;
-    readonly #requestedProtection?: MidaProtectionDirectives;
 
     public constructor ({
         id,
@@ -78,6 +76,10 @@ export class MidaPlaygroundOrder extends MidaOrder {
         this.#configureListeners();
     }
 
+    public override get tradingAccount (): MidaPlaygroundAccount {
+        return super.tradingAccount as MidaPlaygroundAccount;
+    }
+
     public override async cancel (): Promise<void> {
         if (this.status !== MidaOrderStatus.PENDING) {
             return;
@@ -93,7 +95,10 @@ export class MidaPlaygroundOrder extends MidaOrder {
         const lastTrade: MidaTrade = trades.at(-1) as MidaTrade;
 
         this.lastUpdateDate = lastTrade.executionDate;
-        this.positionId = lastTrade.positionId;
+
+        if (!this.positionId) {
+            this.positionId = lastTrade.positionId;
+        }
 
         for (const trade of trades) {
             this.onTrade(trade);
@@ -133,9 +138,9 @@ export class MidaPlaygroundOrder extends MidaOrder {
         });
 
         this.#engineEmitter.once("order-execute", (event: MidaEvent): void => {
-            const trades: MidaTrade[] = event.descriptor.trades;
+            const { order, } = event.descriptor;
 
-            if (trades[0].orderId === this.id) {
+            if (order.id === this.id) {
                 this.#execute(event);
             }
         });

@@ -1,3 +1,7 @@
+## Features
+#### Platforms
+* Playground | Use generators and improve performance (silent release) [#113](https://github.com/Reiryoku-Technologies/Mida/pull/113)
+
 2023.8.1 - 08-06-2023
 ===================
 ## Bug fixes

@@ -20,17 +20,15 @@
  * THE SOFTWARE.
 */
 
-import { MidaPlaygroundEngine, } from "!/src/playground/MidaPlaygroundEngine";
 import { MidaTick, } from "#ticks/MidaTick";
 import { readTicksFromFile, } from "#utilities/MidaFileSystem";
+import { MidaPlaygroundEngine, } from "!/src/playground/MidaPlaygroundEngine";
 
 // eslint-disable-next-line max-lines-per-function
 describe("MidaPlaygroundEngine", () => {
     const ticks: MidaTick[] = [];
 
     beforeAll(async () => {
-        // First tick date is 2022-01-01T14:00:00.000Z
-        // Last tick date is 2022-01-01T14:01:57.143Z
         for await (const tick of readTicksFromFile("./series/ETHUSD.csv", "ETHUSD")) {
             if (tick) {
                 ticks.push(tick);
@@ -49,8 +47,9 @@ describe("MidaPlaygroundEngine", () => {
 
         it("returns the ticks between the current local date and the new local date", async () => {
             const engine = new MidaPlaygroundEngine();
+            const ticksGenerator: AsyncGenerator<MidaTick | undefined> = readTicksFromFile("./series/ETHUSD.csv", "ETHUSD");
 
-            engine.addSymbolTicks("ETHUSD", ticks);
+            engine.setTicksGenerator("ETHUSD", ticksGenerator);
             engine.setLocalDate(ticks[0].date.subtractSeconds(1));
 
             const elapsedTicks = (await engine.elapseTime(60 * 2)).elapsedTicks;
@@ -60,8 +59,9 @@ describe("MidaPlaygroundEngine", () => {
 
         it("updates the internal quotations", async () => {
             const engine = new MidaPlaygroundEngine();
+            const ticksGenerator: AsyncGenerator<MidaTick | undefined> = readTicksFromFile("./series/ETHUSD.csv", "ETHUSD");
 
-            engine.addSymbolTicks("ETHUSD", ticks);
+            engine.setTicksGenerator("ETHUSD", ticksGenerator);
             engine.setLocalDate(ticks[0].date.subtractSeconds(1));
             await engine.elapseTime(60 * 2);
 
@@ -73,9 +73,10 @@ describe("MidaPlaygroundEngine", () => {
 
         it("emits onTick in the order of elapsed ticks", async () => {
             const engine = new MidaPlaygroundEngine();
+            const ticksGenerator: AsyncGenerator<MidaTick | undefined> = readTicksFromFile("./series/ETHUSD.csv", "ETHUSD");
             const emittedTicks: MidaTick[] = [];
 
-            engine.addSymbolTicks("ETHUSD", ticks);
+            engine.setTicksGenerator("ETHUSD", ticksGenerator);
             engine.setLocalDate(ticks[0].date.subtractSeconds(1));
             engine.on("tick", (event) => emittedTicks.push(event.descriptor.tick));
 
@@ -89,17 +90,18 @@ describe("MidaPlaygroundEngine", () => {
 
     describe(".elapseTicks", () => {
         it("doesn't affect the local date when ticks are not available", async () => {
-            const engine = new MidaPlaygroundEngine({ localDate: "2022-04-04T04:04:04.004Z", });
+            const engine = new MidaPlaygroundEngine({ localDate: "2022-01-01T00:00:00.000Z", });
 
             await engine.elapseTicks(100);
 
-            expect(engine.localDate.iso).toBe("2022-04-04T04:04:04.004Z");
+            expect(engine.localDate.iso).toBe("2022-01-01T00:00:00.000Z");
         });
 
         it("updates the internal quotations", async () => {
             const engine = new MidaPlaygroundEngine();
+            const ticksGenerator: AsyncGenerator<MidaTick | undefined> = readTicksFromFile("./series/ETHUSD.csv", "ETHUSD");
 
-            engine.addSymbolTicks("ETHUSD", ticks);
+            engine.setTicksGenerator("ETHUSD", ticksGenerator);
             await engine.elapseTicks(ticks.length);
 
             const lastTick: MidaTick = ticks.at(-1) as MidaTick;

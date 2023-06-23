@@ -64,34 +64,70 @@ import { createOrderResolver, uuid, } from "#utilities/MidaUtilities";
 
 /*
  * 5W (Who, What, Where, When, Why)
- * This is a trading simulator created by Vasile Pește, Reiryoku Technologies and its contributors.
+ * This is a trading simulator created by Vasile Pește, Reiryoku Technologies and its contributors
 */
+
+/**
+ * *** *** *** Parameters and Features Documentation *** *** ***
+ *
+ * Feed Confirmation:
+ * The parameter allowing to stop the engine from emitting new data until your logic
+ * has completed processing the current data.
+ * The Problem: when backtesting with Trading Systems, the engine might emit ticks
+ * when the current tick is still being processed by the trading system logic, since
+ * the engine and trading system are asynchronous and don't know each other, this can
+ * lead to unexpected behaviour for example executing an order at an unexpected price.
+ *
+ * If waitFeedConfirmation is set to true and elapseTime is used, nextFeed() must
+ * be invoked by the trading system when its data processing has finished
+ */
 
 export class MidaPlaygroundEngine {
     #localDate: MidaDate;
+
+    // <generators>
+    readonly #ticksGenerators: Map<string, AsyncGenerator<MidaTick | undefined>>;
+    readonly #periodsGenerators: Map<string, Map<MidaTimeframe, AsyncGenerator<MidaPeriod | undefined>>>;
+    // </generators>
+
+    // <ticks>
+    #savedTicksLimit: number;
     readonly #localTicks: Map<string, MidaTick[]>;
     readonly #lastTicks: Map<string, MidaTick>;
-    readonly #lastTicksIndexes: Map<string, number>;
+    // </ticks>
+
+    // <periods>
+    #savedPeriodsLimit: number;
     readonly #localPeriods: Map<string, Map<MidaTimeframe, MidaPeriod[]>>;
-    readonly #lastPeriodsIndexes: Map<string, Map<MidaTimeframe, number>>;
+    // </periods>
+
     readonly #orders: Map<string, MidaPlaygroundOrder>;
     readonly #trades: Map<string, MidaPlaygroundTrade>;
     readonly #positions: Map<string, MidaPlaygroundPosition>;
+
     readonly #tradingAccounts: Map<string, MidaPlaygroundAccount>;
     #commissionCustomizer?: MidaPlaygroundCommissionCustomizer;
     #waitFeedConfirmation: boolean;
     #feedResolver?: () => void;
     #feedResolverPromise: Promise<void> | undefined;
+
     readonly #emitter: MidaEmitter;
     readonly #protectedEmitter: MidaEmitter;
 
-    public constructor ({ localDate, commissionCustomizer, }: MidaPlaygroundEngineParameters = {}) {
+    public constructor ({
+        localDate,
+        commissionCustomizer,
+        savedTicksLimit,
+        savedPeriodsLimit,
+    }: MidaPlaygroundEngineParameters = {}) {
         this.#localDate = date(localDate ?? 0);
+        this.#ticksGenerators = new Map();
+        this.#periodsGenerators = new Map();
+        this.#savedTicksLimit = savedTicksLimit ?? 1000;
         this.#localTicks = new Map();
         this.#lastTicks = new Map();
-        this.#lastTicksIndexes = new Map();
+        this.#savedPeriodsLimit = savedPeriodsLimit ?? 1000;
         this.#localPeriods = new Map();
-        this.#lastPeriodsIndexes = new Map();
         this.#orders = new Map();
         this.#trades = new Map();
         this.#positions = new Map();
@@ -120,6 +156,22 @@ export class MidaPlaygroundEngine {
         return [ ...this.#positions.values(), ];
     }
 
+    public get savedTicksLimit (): number {
+        return this.#savedTicksLimit;
+    }
+
+    public set savedTicksLimit (limit: number) {
+        this.#savedTicksLimit = limit;
+    }
+
+    public get savedPeriodsLimit (): number {
+        return this.#savedPeriodsLimit;
+    }
+
+    public set savedPeriodsLimit (limit: number) {
+        this.#savedPeriodsLimit = limit;
+    }
+
     public get waitFeedConfirmation (): boolean {
         return this.#waitFeedConfirmation;
     }
@@ -130,9 +182,18 @@ export class MidaPlaygroundEngine {
 
     public setLocalDate (date: MidaDateConvertible): void {
         this.#localDate = new MidaDate(date);
+    }
 
-        this.#lastTicksIndexes.clear();
-        this.#lastPeriodsIndexes.clear();
+    public setTicksGenerator (symbol: string, generator: AsyncGenerator<MidaTick | undefined>): void {
+        this.#ticksGenerators.set(symbol, generator);
+    }
+
+    public setPeriodsGenerator (symbol: string, timeframe: MidaTimeframe, generator: AsyncGenerator<MidaPeriod | undefined>): void {
+        if (!this.#periodsGenerators.has(symbol)) {
+            this.#periodsGenerators.set(symbol, new Map());
+        }
+
+        this.#periodsGenerators.get(symbol)?.set(timeframe, generator);
     }
 
     public setCommissionCustomizer (customizer?: MidaPlaygroundCommissionCustomizer): void {
@@ -268,7 +329,7 @@ export class MidaPlaygroundEngine {
     }
 
     /**
-     * Elapses a given amount of time (triggering the respective ticks)
+     * Elapses a given amount of time (triggering the respective market data)
      * @param seconds Amount of seconds to elapse
      */
     // eslint-disable-next-line max-lines-per-function
@@ -283,50 +344,83 @@ export class MidaPlaygroundEngine {
         const previousDate: MidaDate = this.#localDate;
         const currentDate: MidaDate = previousDate.addSeconds(seconds);
 
-        // <elapsed-ticks>
+        // <feed-ticks-from-generators>
         const elapsedTicks: MidaTick[] = [];
 
-        for (const symbol of [ ...this.#localTicks.keys(), ]) {
-            const ticks: MidaTick[] = this.#localTicks.get(symbol) ?? [];
-            const lastTickIndex: number = this.#lastTicksIndexes.get(symbol) ?? -1;
+        // Assumption: generated ticks are ordered by time
+        for (const [ symbol, generator, ] of [ ...this.#ticksGenerators.entries(), ]) {
+            while (true) {
+                const tick: MidaTick | undefined = (await generator.next()).value;
 
-            for (let i: number = lastTickIndex + 1; i < ticks.length; ++i) {
-                const tick: MidaTick = ticks[i];
+                if (!tick) {
+                    logger.info(`Playground | ${symbol} ticks generator has reached its end`);
 
-                if (tick.date.timestamp > previousDate.timestamp && tick.date.timestamp <= currentDate.timestamp) {
+                    break;
+                }
+
+                // Terminate generation if a tick of the future is encountered
+                // (assume that generated ticks are ordered by time)
+                if (tick.date.timestamp > currentDate.timestamp) {
+                    break;
+                }
+
+                if (tick.date.timestamp > previousDate.timestamp) {
                     elapsedTicks.push(tick);
-                    this.#lastTicksIndexes.set(symbol, i);
                 }
             }
         }
+        // </feed-ticks-from-generators>
 
-        await this.#processTicks(elapsedTicks);
-        // </elapsed-ticks>
-
-        // <elapsed-periods>
+        // <feed-periods-from-generators>
         const elapsedPeriods: MidaPeriod[] = [];
 
-        for (const symbol of [ ...this.#localPeriods.keys(), ]) {
-            for (const timeframe of [ ...this.#localPeriods.get(symbol)?.keys() ?? [], ]) {
-                const periods: MidaPeriod[] = this.#localPeriods.get(symbol)?.get(timeframe) ?? [];
-                const lastPeriodIndex: number = this.#lastPeriodsIndexes.get(symbol)?.get(timeframe) ?? -1;
+        for (const [ symbol, timeframesMap, ] of [ ...this.#periodsGenerators.entries(), ]) {
+            for (const [ timeframe, generator, ] of [ ...timeframesMap.entries(), ]) {
+                while (true) {
+                    const period: MidaPeriod | undefined = (await generator.next()).value;
 
-                for (let i: number = lastPeriodIndex + 1; i < periods.length; ++i) {
-                    const period: MidaPeriod = periods[i];
+                    if (!period) {
+                        logger.info(`Playground | ${symbol} ${timeframe} periods generator has reached its end`);
 
-                    if (period.endDate.timestamp > previousDate.timestamp && period.endDate.timestamp <= currentDate.timestamp) {
+                        break;
+                    }
+
+                    // TODO: Trigger also opened candles, not only closed
+                    // Terminate generation if a period of the future is encountered
+                    // (assume that generated periods are ordered by time)
+                    if (period.endDate.timestamp > currentDate.timestamp) {
+                        break;
+                    }
+
+                    if (period.endDate.timestamp > previousDate.timestamp) {
                         elapsedPeriods.push(period);
-
-                        this.#lastPeriodsIndexes.get(symbol)?.set(timeframe, i);
                     }
                 }
             }
         }
+        // </feed-periods-from-generators>
 
-        logger.debug(`Playground | Preparing to elapse ${elapsedPeriods.length} periods`);
+        const elapsedData: (MidaTick | MidaPeriod)[] = [ ...elapsedTicks, ...elapsedPeriods, ];
 
-        await this.#processPeriods(elapsedPeriods);
-        // </elapsed-periods>
+        elapsedData.sort((a: MidaTick | MidaPeriod, b: MidaTick | MidaPeriod): number => {
+            const left: number = a instanceof MidaTick ? a.date.timestamp : a.endDate.timestamp;
+            const right: number = b instanceof MidaTick ? b.date.timestamp : b.endDate.timestamp;
+
+            return left - right;
+        });
+
+        logger.info(`Playground | Preparing to process ${elapsedTicks.length} ticks and ${elapsedPeriods.length} periods`);
+
+        for (let i = 0, length = elapsedData.length; i < length; ++i) {
+            const data: MidaTick | MidaPeriod = elapsedData[i];
+
+            if (data instanceof MidaTick) {
+                await this.#processTick(data);
+            }
+            else {
+                await this.#processPeriod(data);
+            }
+        }
 
         this.#localDate = currentDate;
 
@@ -336,37 +430,44 @@ export class MidaPlaygroundEngine {
         };
     }
 
-    public async elapseTicks (volume: number = 1): Promise<MidaPlaygroundEngineElapsedData> {
-        if (volume <= 0) {
+    public async elapseTicks (quantity: number = 1): Promise<MidaPlaygroundEngineElapsedData> {
+        if (quantity <= 0) {
             return {
                 elapsedTicks: [],
                 elapsedPeriods: [],
             };
         }
 
+        const currentTimestamp = this.#localDate.timestamp;
+
+        // <feed-ticks-from-generators>
         const elapsedTicks: MidaTick[] = [];
-        const symbols: string[] = [ ...this.#localTicks.keys(), ];
 
-        // eslint-disable-next-line @typescript-eslint/prefer-for-of
-        for (let i: number = 0; i < symbols.length; ++i) {
-            const symbol: string = symbols[i];
-            const ticks: MidaTick[] = this.#localTicks.get(symbol) ?? [];
-            const lastTickIndex: number = this.#lastTicksIndexes.get(symbol) ?? 0;
-
-            for (let j: number = 1; j <= volume; ++j) {
-                const tick: MidaTick | undefined = ticks[lastTickIndex + j];
+        // Assumption: generated ticks are ordered by time
+        for (const [ symbol, generator, ] of [ ...this.#ticksGenerators.entries(), ]) {
+            while (true) {
+                const tick: MidaTick | undefined = (await generator.next()).value;
 
                 if (!tick) {
+                    logger.info(`Playground | ${symbol} ticks generator has reached its end`);
+
                     break;
                 }
 
-                elapsedTicks.push(tick);
+                if (tick.date.timestamp > currentTimestamp) {
+                    elapsedTicks.push(tick);
+                }
+
+                if (elapsedTicks.length >= quantity) {
+                    break;
+                }
             }
-
-            this.#lastTicksIndexes.set(symbol, lastTickIndex + volume);
         }
+        // </feed-ticks-from-generators>
 
-        await this.#processTicks(elapsedTicks);
+        for (let i = 0, length = elapsedTicks.length; i < length; ++i) {
+            await this.#processTick(elapsedTicks[i]);
+        }
 
         return {
             elapsedTicks,
@@ -390,8 +491,10 @@ export class MidaPlaygroundEngine {
 
         updatedTicks.sort((a: MidaTick, b: MidaTick): number => a.date.timestamp - b.date.timestamp);
 
-        this.#localTicks.set(symbol, updatedTicks);
-        this.#lastTicksIndexes.set(symbol, -1);
+        const cappedTicks: MidaTick[] =
+                this.savedTicksLimit > 0 ? updatedTicks.slice(-this.savedTicksLimit) : updatedTicks;
+
+        this.#localTicks.set(symbol, cappedTicks);
     }
 
     public addSymbolPeriods (symbol: string, periods: MidaPeriod[]): void {
@@ -401,17 +504,14 @@ export class MidaPlaygroundEngine {
 
         updatedPeriods.sort((a: MidaPeriod, b: MidaPeriod): number => a.startDate.timestamp - b.startDate.timestamp);
 
+        const cappedPeriods: MidaPeriod[] =
+                this.savedPeriodsLimit > 0 ? updatedPeriods.slice(-this.savedPeriodsLimit) : updatedPeriods;
+
         if (!this.#localPeriods.has(symbol)) {
             this.#localPeriods.set(symbol, new Map());
         }
 
-        this.#localPeriods.get(symbol)?.set(timeframe, updatedPeriods);
-
-        if (!this.#lastPeriodsIndexes.has(symbol)) {
-            this.#lastPeriodsIndexes.set(symbol, new Map());
-        }
-
-        this.#lastPeriodsIndexes.get(symbol)?.set(timeframe, -1);
+        this.#localPeriods.get(symbol)?.set(timeframe, cappedPeriods);
     }
 
     public getSymbolTicks (symbol: string): MidaTick[] {
@@ -436,13 +536,20 @@ export class MidaPlaygroundEngine {
         return pendingOrders;
     }
 
-    public async getOpenPositions (): Promise<MidaPosition[]> {
-        return [ ...this.#positions.values(), ]
-            .filter((position: MidaPosition) => position.status === MidaPositionStatus.OPEN);
+    public async getOpenPositions (): Promise<MidaPlaygroundPosition[]> {
+        const openPositions = [];
+
+        for (const position of [ ...this.#positions.values(), ]) {
+            if (position.status === MidaPositionStatus.OPEN) {
+                openPositions.push(position);
+            }
+        }
+
+        return openPositions;
     }
 
-    public async getOpenPositionById (id: string): Promise<MidaPosition | undefined> {
-        const openPositions: MidaPosition[] = await this.getOpenPositions();
+    public async getOpenPositionById (id: string): Promise<MidaPlaygroundPosition | undefined> {
+        const openPositions: MidaPlaygroundPosition[] = await this.getOpenPositions();
 
         for (const position of openPositions) {
             if (position.id === id) {
@@ -460,19 +567,34 @@ export class MidaPlaygroundEngine {
 
     // eslint-disable-next-line max-lines-per-function, complexity
     protected async tryExecuteOrder (order: MidaPlaygroundOrder): Promise<MidaOrder> {
-        const tradingAccount: MidaPlaygroundAccount = order.tradingAccount as MidaPlaygroundAccount;
+        const tradingAccount: MidaPlaygroundAccount = order.tradingAccount;
         const executedVolume: MidaDecimal = order.requestedVolume;
-        const symbol: MidaSymbol | undefined = await tradingAccount.getSymbol(order.symbol);
+        const symbol = order.symbol;
+        const completeSymbol: MidaSymbol | undefined = await tradingAccount.getSymbol(symbol);
 
-        if (!symbol) {
+        if (!completeSymbol) {
             this.rejectOrder(order.id, MidaOrderRejection.SYMBOL_NOT_FOUND);
 
             return order;
         }
 
+        // <impacted-position-validation>
+        let positionId: string | undefined = order.positionId;
+        let position: MidaPlaygroundPosition | undefined = undefined;
+
+        if (positionId) {
+            position = await this.getOpenPositionById(positionId);
+
+            if (!position) {
+                this.rejectOrder(order.id, MidaOrderRejection.POSITION_NOT_FOUND);
+
+                return order;
+            }
+        }
+        // </impacted-position-validation>
+
         // <execution-price>
-        const bid: MidaDecimal = await this.getSymbolBid(order.symbol);
-        const ask: MidaDecimal = await this.getSymbolAsk(order.symbol);
+        const [ bid, ask, ] = await Promise.all([ this.getSymbolBid(symbol), this.getSymbolAsk(symbol), ]);
         const executionPrice: MidaDecimal = order.direction === MidaOrderDirection.SELL ? bid : ask;
         const executionDate: MidaDate = this.#localDate;
         // <execution-price>
@@ -509,23 +631,23 @@ export class MidaPlaygroundEngine {
         // </protection-validation>
 
         let grossProfit: MidaDecimal = executedVolume;
-        let grossProfitAsset: string = symbol.baseAsset;
+        let grossProfitAsset: string = completeSymbol.baseAsset;
 
         if (order.direction === MidaOrderDirection.SELL) {
             grossProfit = grossProfit.multiply(executionPrice);
-            grossProfitAsset = symbol.quoteAsset;
+            grossProfitAsset = completeSymbol.quoteAsset;
         }
 
         // <trade>
-        let assetToWithdraw: string = symbol.quoteAsset;
+        let assetToWithdraw: string = completeSymbol.quoteAsset;
         let volumeToWithdraw: MidaDecimal = grossProfit.multiply(executionPrice);
-        let assetToDeposit: string = symbol.baseAsset;
+        let assetToDeposit: string = completeSymbol.baseAsset;
         let volumeToDeposit: MidaDecimal = grossProfit;
 
         if (order.direction === MidaOrderDirection.SELL) {
-            assetToWithdraw = symbol.baseAsset;
+            assetToWithdraw = completeSymbol.baseAsset;
             volumeToWithdraw = executedVolume;
-            assetToDeposit = symbol.quoteAsset;
+            assetToDeposit = completeSymbol.quoteAsset;
             volumeToDeposit = grossProfit;
         }
 
@@ -548,6 +670,7 @@ export class MidaPlaygroundEngine {
 
         await tradingAccount.withdraw(commissionAsset, commission);
         // </commission>
+
         // <swap>
         const swap: MidaDecimal = decimal(0);
         const swapAsset: string = tradingAccount.primaryAsset;
@@ -555,18 +678,15 @@ export class MidaPlaygroundEngine {
         await tradingAccount.deposit(swapAsset, swap);
         // </swap>
 
-        let position: MidaPlaygroundPosition;
-
-        if (!order.positionId) {
+        if (!position) {
             const protection: MidaProtection = {};
-            const protectionDirectives: MidaProtectionDirectives = order.requestedProtection ?? {};
 
-            if ("stopLoss" in protectionDirectives) {
-                protection.stopLoss = decimal(protectionDirectives.stopLoss);
+            if ("stopLoss" in requestedProtection) {
+                protection.stopLoss = decimal(requestedProtection.stopLoss);
             }
 
-            if ("takeProfit" in protectionDirectives) {
-                protection.takeProfit = decimal(protectionDirectives.takeProfit);
+            if ("takeProfit" in requestedProtection) {
+                protection.takeProfit = decimal(requestedProtection.takeProfit);
             }
 
             position = new MidaPlaygroundPosition({
@@ -581,11 +701,9 @@ export class MidaPlaygroundEngine {
 
             this.#positions.set(position.id, position);
         }
-        else {
-            position = await this.getOpenPositionById(order.positionId) as MidaPlaygroundPosition;
-        }
 
-        const positionId = position.id;
+        positionId = position.id;
+
         const trade: MidaPlaygroundTrade = new MidaPlaygroundTrade({
             id: uuid(),
             orderId: order.id,
@@ -605,11 +723,15 @@ export class MidaPlaygroundEngine {
             swapAsset,
             tradingAccount,
         });
-        // </trade>
 
         this.#trades.set(trade.id, trade);
         this.#protectedEmitter.notifyListeners("trade", { trade, });
-        this.#protectedEmitter.notifyListeners("order-execute", { trades: [ trade, ], });
+        // </trade>
+
+        this.#protectedEmitter.notifyListeners("order-execute", {
+            order,
+            trades: [ trade, ],
+        });
 
         return order;
     }
@@ -658,24 +780,23 @@ export class MidaPlaygroundEngine {
         this.#emitter.notifyListeners(type, descriptor);
     }
 
-    async #processTicks (ticks: MidaTick[]): Promise<void> {
-        ticks.sort((a: MidaTick, b: MidaTick): number => a.date.timestamp - b.date.timestamp);
+    async #processTick (tick: MidaTick): Promise<void> {
+        const symbol = tick.symbol;
+        this.#localDate = tick.date;
+        this.#lastTicks.set(symbol, tick);
 
-        for (const tick of ticks) {
-            await this.#onTick(tick);
-        }
+        // await this.addSymbolTicks(symbol, [ tick, ]);
+        await this.#onTick(tick);
     }
 
     async #onTick (tick: MidaTick): Promise<void> {
         // <feed-confirmation>
-        this.#feedResolverPromise = new Promise<void>((resolve) => {
-            this.#feedResolver = (): void => resolve();
-        });
+        if (this.#waitFeedConfirmation) {
+            this.#feedResolverPromise = new Promise<void>((resolve) => {
+                this.#feedResolver = (): void => resolve();
+            });
+        }
         // </feed-confirmation>
-
-        this.#localDate = tick.date;
-
-        this.#lastTicks.set(tick.symbol, tick);
 
         await this.#updatePendingOrders(tick);
         await this.#updateOpenPositions(tick);
@@ -701,32 +822,30 @@ export class MidaPlaygroundEngine {
         // </feed-confirmation>
     }
 
-    async #processPeriods (periods: MidaPeriod[]): Promise<MidaTick[]> {
-        const elapsedTicks: MidaTick[] = [];
+    async #processPeriod (period: MidaPeriod): Promise<void> {
+        await this.addSymbolPeriods(period.symbol, [ period, ]);
+        await this.#onPeriodUpdate(period);
 
-        periods.sort((a: MidaPeriod, b: MidaPeriod): number => a.startDate.timestamp - b.startDate.timestamp);
+        if (period.isClosed) {
+            await this.#onPeriodClose(period);
 
-        for (const period of periods) {
-            const ticks: MidaTick[] = [ tickFromPeriod(period, "close"), ];
+            const elapsedTicks: MidaTick[] = [ tickFromPeriod(period, "close"), ];
 
-            await this.#processTicks(ticks);
-            await this.#onPeriodUpdate(period);
-
-            if (period.isClosed) {
-                await this.#onPeriodClose(period);
+            /*
+            for (let i: number = 0, length: number = elapsedTicks.length; i < length; ++i) {
+                await this.#processTick(elapsedTicks[i]);
             }
-
-            elapsedTicks.push(...ticks);
+            */
         }
-
-        return elapsedTicks;
     }
 
     async #onPeriodUpdate (period: MidaPeriod): Promise<void> {
         // <feed-confirmation>
-        this.#feedResolverPromise = new Promise<void>((resolve) => {
-            this.#feedResolver = (): void => resolve();
-        });
+        if (this.#waitFeedConfirmation) {
+            this.#feedResolverPromise = new Promise<void>((resolve) => {
+                this.#feedResolver = (): void => resolve();
+            });
+        }
         // </feed-confirmation>
 
         this.#emitter.notifyListeners("period-update", { period, });
@@ -740,9 +859,11 @@ export class MidaPlaygroundEngine {
 
     async #onPeriodClose (period: MidaPeriod): Promise<void> {
         // <feed-confirmation>
-        this.#feedResolverPromise = new Promise<void>((resolve) => {
-            this.#feedResolver = (): void => resolve();
-        });
+        if (this.#waitFeedConfirmation) {
+            this.#feedResolverPromise = new Promise<void>((resolve) => {
+                this.#feedResolver = (): void => resolve();
+            });
+        }
         // </feed-confirmation>
 
         this.#emitter.notifyListeners("period-close", { period, });
@@ -798,8 +919,8 @@ export class MidaPlaygroundEngine {
     async #updateOpenPositions (tick: MidaTick): Promise<void> {
         const openPositions: MidaPosition[] = await this.getOpenPositions();
 
-        for (const position of openPositions) {
-            await this.#updateOpenPosition(position, tick);
+        for (let i = 0, length = openPositions.length; i < length; ++i) {
+            await this.#updateOpenPosition(openPositions[i], tick);
         }
     }
 

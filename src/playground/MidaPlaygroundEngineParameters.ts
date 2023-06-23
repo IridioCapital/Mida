@@ -26,4 +26,6 @@ import { MidaDateConvertible, } from "#dates/MidaDateConvertible";
 export type MidaPlaygroundEngineParameters = {
     localDate?: MidaDateConvertible;
     commissionCustomizer?: MidaPlaygroundCommissionCustomizer;
+    savedTicksLimit?: number;
+    savedPeriodsLimit?: number;
 };
