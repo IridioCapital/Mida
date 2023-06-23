@@ -21,6 +21,7 @@
 */
 
 import { MidaMarketComponentState, } from "#components/MidaMarketComponentState";
+import { logger, } from "#loggers/MidaLogger";
 import { MidaPeriod, } from "#periods/MidaPeriod";
 import { MidaPeriodPriceKey, } from "#periods/MidaPeriodPriceKey";
 import { MidaTradingSystem, } from "#systems/MidaTradingSystem";
@@ -177,6 +178,12 @@ export class MidaMarketComponentOracle extends MidaTradingSystem {
 
     /** This method updates only the indicators of the given state and not its dependencies */
     protected async updateIndicators (state: MidaMarketComponentState, periods: MidaPeriod[]): Promise<void> {
+        if (periods.length === 0) {
+            logger.warn("Market Component | No periods available to update indicators");
+
+            return;
+        }
+
         const timeframe: MidaTimeframe = periods[0].timeframe;
         const lastPeriod: MidaPeriod = periods[periods.length - 1];
 

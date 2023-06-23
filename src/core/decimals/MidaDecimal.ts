@@ -29,6 +29,10 @@ import { logger, } from "#loggers/MidaLogger";
 export const decimal =
     (value: MidaDecimalConvertible = 0, digits: number = 32): MidaDecimal => new MidaDecimal(value, digits);
 
+/**
+ * Represents an immutable decimal number
+ * with operational logic not subject to floating point error
+ */
 export class MidaDecimal {
     readonly #value: bigint;
     readonly #digits: number;
@@ -116,6 +120,10 @@ export class MidaDecimal {
         return this.lessThan(operand) || this.equals(operand);
     }
 
+    public isZero (): boolean {
+        return this.#value === 0n;
+    }
+
     public toFixed (digits: number): MidaDecimal {
         if (digits === 0) {
             return decimal(this.toString().split(".")[0]);
@@ -159,6 +167,11 @@ export class MidaDecimal {
     /* *** *** *** Reiryoku Technologies *** *** *** */
 
     static readonly #rounded = true;
+    static readonly #zero = decimal(0);
+
+    public static get ZERO (): MidaDecimal {
+        return MidaDecimal.#zero;
+    }
 
     public static abs (operand: MidaDecimal): MidaDecimal {
         if (operand.lessThan(0)) {

@@ -184,6 +184,8 @@ export abstract class MidaPosition {
                 this.#emitter.notifyListeners("reverse");
             }
             else if (volumeDifference.equals(0)) {
+                this.#direction = undefined;
+
                 this.#emitter.notifyListeners("close");
             }
 

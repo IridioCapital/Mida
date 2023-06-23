@@ -91,7 +91,9 @@ export const readPeriodsFromFile = async function* (file: string, symbol: string
                 symbol,
                 timeframe,
                 startDate: date(csvPeriod[0]),
-                endDate: date(csvPeriod[0]).add(MidaTimeframe.toSeconds(timeframe) as number * 1000),
+                // @ts-ignore
+                // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+                endDate: date(Number(csvPeriod[0]) + MidaTimeframe.toSeconds(timeframe)),
                 open: decimal(csvPeriod[1]),
                 high: decimal(csvPeriod[2]),
                 low: decimal(csvPeriod[3]),

@@ -27,14 +27,6 @@ import { MidaTimeframe, } from "#timeframes/MidaTimeframe";
 
 export type MidaBacktestSymbolDirectives = {
     params: Omit<MidaSymbolParameters, "symbol" | "tradingAccount">;
-    ticks?: MidaTick[] | string;
-    //                   ^
-    //                   |
-    //                   |
-    //              CSV FILE PATH
-    periods?: Record<MidaTimeframe, MidaPeriod[] | string>;
-    //                                             ^
-    //                                             |
-    //                                             |
-    //                                        CSV FILE PATH
+    ticks?: AsyncGenerator<MidaTick | undefined>;
+    periods?: Record<MidaTimeframe, AsyncGenerator<MidaPeriod | undefined>>;
 };

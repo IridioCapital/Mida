@@ -20,11 +20,13 @@
  * THE SOFTWARE.
 */
 
-import { MidaPlaygroundAccount, } from "!/src/playground/accounts/MidaPlaygroundAccount";
 import { MidaDecimal, } from "#decimals/MidaDecimal";
+import { MidaPlaygroundAccount, } from "!/src/playground/accounts/MidaPlaygroundAccount";
+import { MidaPlaygroundPosition, } from "!/src/playground/positions/MidaPlaygroundPosition";
 
-// Remember that it's not about how much you can make in one day or one month, it's all about how long you can last in this market
 export type MidaBacktest = {
     tradingAccount: MidaPlaygroundAccount;
-    equityByDays: Record<string, MidaDecimal>;
+    equityCurve: Record<string, MidaDecimal>;
+    positions: MidaPlaygroundPosition[];
+    realizedProfit: MidaDecimal;
 };

@@ -1,1 +1,1 @@
-The Mida playground source code
+The Mida backtesting engine source code
