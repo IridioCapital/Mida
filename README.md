@@ -52,7 +52,7 @@ Designed from the ground up to provide a solid, versatile and platform-neutral
 environment for creating algorithmic trading systems, indicators, market analysis tools or just trading
 applications depending on use cases.<br>
 
-**Would you like to honor our efforts? If so, you can leave a star on GitHub :star:. Thank you!**
+**Would you like to honor our efforts? If so, you can leave a star on GitHub ⭐. Thank you!**
 
 ### Languages
 Mida is used with JavaScript/TypeScript on [Node.js](https://nodejs.org) and
