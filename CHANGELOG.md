@@ -1,3 +1,5 @@
+2023.9.0 - 27-06-2023
+===================
 ## Features
 #### Platforms
 * Playground | Add trades statistics and calculate trades gross profit (silent release) [#134](https://github.com/Reiryoku-Technologies/Mida/pull/134)
