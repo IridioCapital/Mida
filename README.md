@@ -266,8 +266,8 @@ await myPosition.changeProtection({
 Computers can only natively store integers, so they need some way of representing
 decimal numbers. This representation is not perfectly accurate. This is why, in
 most programming languages `0.1 + 0.2 != 0.3`, for financial and monetary calculations
-this can lead to unreversible losses.<br>
-In Mida, decimal numbers and calculations are accurately represented by the `MidaDecimal` API.
+this can lead to unreversible losses.<br> In Mida, decimal numbers and calculations
+are safe by design and accurately represented by the `MidaDecimal` API.
 
 ```javascript
 import { decimal, } from "@reiryoku/mida";
