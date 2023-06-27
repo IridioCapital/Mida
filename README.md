@@ -32,7 +32,7 @@
     * [Community](#community)
 * [Installation](#installation)
 * [Usage](#usage)
-    * [Account login](#account-login)
+    * [Account connection](#account-connection)
     * [Balance, equity and margin](#balance-equity-and-margin)
     * [Orders, trades and positions](#orders-trades-and-positions)
     * [Decimals](#decimals)
@@ -60,8 +60,8 @@ can be additionally enhanced with C++.<br>
 [Why JavaScript/TypeScript?](#why-javascripttypescript)
 
 ### Platforms
-Mida is platform-neutral, this means that any trading platform could
-be easily integrated in the ecosystem. Applications built with Mida can be
+Mida is platform-neutral, this means that virtually any trading platform could
+be easily integrated in the engine. Applications built with Mida can be
 easily executed on different trading platforms.
 
 <br><br>
@@ -82,38 +82,26 @@ npm install @reiryoku/mida
 ```
 
 ## Usage
-### Account login
-How to login into a Binance Spot account,<br>
+### Account connection
+How to connect to a Binance Spot account,<br>
 read [how to use Mida with Binance](https://www.mida.org/posts/how-to-use-mida-with-binance/) to
 get your `apiKey` and `apiSecret` credentials.
 ```javascript
-import { login, } from "@reiryoku/mida";
+import { connect, } from "@reiryoku/mida";
 
-const myAccount = await login("Binance/Spot", {
+const myAccount = await connect("Binance/Spot", {
     apiKey: "***",
     apiSecret: "***",
 });
 ```
 
-How to login into a Bybit Futures account,<br>
-read [how to use Mida with Bybit](https://www.mida.org/posts/how-to-use-mida-with-bybit/) to
-get your `apiKey` and `apiSecret` credentials.
-```javascript
-import { login, } from "@reiryoku/mida";
-
-const myAccount = await login("Bybit/Futures", {
-    apiKey: "***",
-    apiSecret: "***",
-});
-```
-
-How to login into a cTrader account,<br>
+How to connect to a cTrader account,<br>
 read [how to use Mida with cTrader](https://www.mida.org/posts/how-to-use-mida-with-ctrader/) to
 get your `clientId`, `clientSecret`, `accessToken` and `accountId` credentials.
 ```javascript
-import { login, } from "@reiryoku/mida";
+import { connect, } from "@reiryoku/mida";
 
-const myAccount = await login("cTrader", {
+const myAccount = await connect("cTrader", {
     clientId: "***",
     clientSecret: "***",
     accessToken: "***",
@@ -121,13 +109,25 @@ const myAccount = await login("cTrader", {
 });
 ```
 
-How to login into multiple accounts.
+How to connect to a Bybit Futures account,<br>
+read [how to use Mida with Bybit](https://www.mida.org/posts/how-to-use-mida-with-bybit/) to
+get your `apiKey` and `apiSecret` credentials.
 ```javascript
-import { login, } from "@reiryoku/mida";
+import { connect, } from "@reiryoku/mida";
 
-const myAccount1 = await login("Binance/Spot", { /* ... */ });
-const myAccount2 = await login("Bybit/Futures", { /* ... */ });
-const myAccount3 = await login("cTrader", { /* ... */ });
+const myAccount = await connect("Bybit/Futures", {
+    apiKey: "***",
+    apiSecret: "***",
+});
+```
+
+How to connect to multiple accounts.
+```javascript
+import { connect, } from "@reiryoku/mida";
+
+const myAccount1 = await connect("Binance/Spot", { /* ... */ });
+const myAccount2 = await connect("Bybit/Futures", { /* ... */ });
+const myAccount3 = await connect("cTrader", { /* ... */ });
 ```
 
 ### Balance, equity and margin
@@ -587,10 +587,10 @@ class SuperTradingSystem extends MidaTradingSystem {
 
 How to execute a trading system.
 ```javascript
-import { login, } from "@reiryoku/mida";
+import { connect, } from "@reiryoku/mida";
 import { SuperTradingSystem, } from "./SuperTradingSystem";
 
-const myAccount = await login(/* ... */);
+const myAccount = await connect(/* ... */);
 const mySystem = new SuperTradingSystem({ tradingAccount: myAccount, });
 
 await mySystem.start();
@@ -649,10 +649,8 @@ real-time data processing and seamless communication, allowing traders to swiftl
 The language's efficient handling of asynchronous tasks enables simultaneous management of multiple market feeds,
 execution of trades, and response to market events, ensuring optimal performance and responsiveness.
 
-Finally, we designed Mida in manner to incorporate C++, offering the flexibility for traders to develop
-C++ functions specifically tailored for super CPU-intensive tasks. This integration of C++ allows for enhanced
-performance optimization while combining the strengths of JavaScript/TypeScript for rapid development
-and strategy-focused programming.
+Finally, we designed Mida offering the flexibility to use C++, this integration allows for enhanced performance
+optimizations combined with the strengths of JavaScript/TypeScript for rapid development and strategy-focused programming.
 
 ## License and disclaimer
 [LICENSE](./LICENSE)<br><br>
