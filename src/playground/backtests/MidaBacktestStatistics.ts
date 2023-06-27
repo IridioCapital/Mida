@@ -20,13 +20,12 @@
  * THE SOFTWARE.
 */
 
-import { MidaDecimal, } from "#decimals/MidaDecimal";
 import { MidaPlaygroundAccount, } from "!/src/playground/accounts/MidaPlaygroundAccount";
-import { MidaPlaygroundPosition, } from "!/src/playground/positions/MidaPlaygroundPosition";
+import { MidaTradingStatistics, } from "!/src/playground/statistics/MidaTradingStatistics";
 
-export type MidaBacktest = {
+export type MidaBacktestStatistics = {
     tradingAccount: MidaPlaygroundAccount;
-    equityCurve: Record<string, MidaDecimal>;
-    positions: MidaPlaygroundPosition[];
-    realizedProfit: MidaDecimal;
+    tradingStatistics: MidaTradingStatistics;
+    from: string;
+    to: string;
 };

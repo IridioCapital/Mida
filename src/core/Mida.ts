@@ -90,7 +90,11 @@ const { login, createIndicator, } = Mida;
 
 // <public-api>
 export { Mida, };
-export { login, createIndicator, };
+export {
+    login,
+    login as connect,
+    createIndicator,
+};
 
 export { MidaTradingAccount, } from "#accounts/MidaTradingAccount";
 export { MidaTradingAccountOperativity, } from "#accounts/MidaTradingAccountOperativity";
@@ -210,9 +214,9 @@ export { GenericObject, } from "#utilities/GenericObject";
 export { MidaAnalysis, } from "#utilities/MidaAnalysis";
 export {
     closeFileReader,
-    readTicksFromFile,
-    readPeriodsFromFile,
-} from "#utilities/MidaFileSystem";
+    ticksGenerator,
+    periodsGenerator,
+} from "#utilities/MidaGenerators";
 export {
     wait,
     shuffleArray,

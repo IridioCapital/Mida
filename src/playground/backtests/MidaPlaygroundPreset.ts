@@ -21,31 +21,29 @@
 */
 
 import { marketComponent, } from "#components/MidaMarketComponent";
-import { date, MidaDate, } from "#dates/MidaDate";
+import { date, } from "#dates/MidaDate";
 import { MidaDateConvertible, } from "#dates/MidaDateConvertible";
-import { decimal, MidaDecimal, } from "#decimals/MidaDecimal";
-import { logger, } from "#loggers/MidaLogger";
 import { MidaPeriod, } from "#periods/MidaPeriod";
-import { MidaPosition, } from "#positions/MidaPosition";
 import { MidaTick, } from "#ticks/MidaTick";
 import { MidaTimeframe, } from "#timeframes/MidaTimeframe";
 import { MidaMarketWatcherDirectives, } from "#watchers/MidaMarketWatcherDirectives";
 import { MidaPlaygroundAccount, } from "!/src/playground/accounts/MidaPlaygroundAccount";
-import { MidaBacktest, } from "!/src/playground/backtests/MidaBacktest";
 import { MidaBacktestDirectives, } from "!/src/playground/backtests/MidaBacktestDirectives";
-import { MidaBacktestPresetParameters, } from "!/src/playground/backtests/MidaBacktestPresetParameters";
-import { MidaBacktestPresetTarget, } from "!/src/playground/backtests/MidaBacktestPresetTarget";
+import { MidaBacktestStatistics, } from "!/src/playground/backtests/MidaBacktestStatistics";
+import { MidaPlaygroundPresetParameters, } from "!/src/playground/backtests/MidaPlaygroundPresetParameters";
+import { MidaPlaygroundPresetTarget, } from "!/src/playground/backtests/MidaPlaygroundPresetTarget";
 import { MidaPlaygroundEngine, } from "!/src/playground/MidaPlaygroundEngine";
-import { MidaPlaygroundPosition, } from "!/src/playground/positions/MidaPlaygroundPosition";
+import { getTradesStatistics, } from "!/src/playground/statistics/MidaTradingStatistics";
+import { MidaPlaygroundTrade, } from "!/src/playground/trades/MidaPlaygroundTrade";
 
-export const backtestPreset =
-    (directives: MidaBacktestDirectives): MidaBacktestPreset => new MidaBacktestPreset({ directives, });
+export const playgroundPreset =
+    (directives: MidaBacktestDirectives): MidaPlaygroundPreset => new MidaPlaygroundPreset({ directives, });
 
-export class MidaBacktestPreset {
+export class MidaPlaygroundPreset {
     readonly #directives: MidaBacktestDirectives;
     #timeframes: MidaTimeframe[];
 
-    public constructor ({ directives, }: MidaBacktestPresetParameters) {
+    public constructor ({ directives, }: MidaPlaygroundPresetParameters) {
         this.#directives = directives;
         this.#timeframes = [];
     }
@@ -81,19 +79,26 @@ export class MidaBacktestPreset {
 
         this.#timeframes = timeframes;
 
+        engine.setLocalDate(date(from ?? this.#directives.from).timestamp - 86400 * 1000 * 4);
+
         await engine.elapseTime((date(from ?? this.#directives.from).timestamp - engine.localDate.timestamp) / 1000);
 
         return engine;
     }
 
     // eslint-disable-next-line max-lines-per-function
-    public async backtest (target: MidaBacktestPresetTarget): Promise<MidaBacktest> {
-        const engine: MidaPlaygroundEngine = await this.createEngine(this.#directives.from);
-        const equityCurve: Record<string, MidaDecimal> = {};
+    public async backtest (target: MidaPlaygroundPresetTarget): Promise<MidaBacktestStatistics> {
+        const engine: MidaPlaygroundEngine = await this.createEngine(target.from ?? this.#directives.from);
         const timeframes: MidaTimeframe[] = this.#timeframes;
         const account: MidaPlaygroundAccount =
             await engine.createAccount({ balanceSheet: this.#directives.balanceSheet, });
-        const positions: Map<string, MidaPlaygroundPosition> = new Map();
+        const {
+            commissionCustomizer,
+        } = this.#directives;
+
+        if (commissionCustomizer) {
+            engine.setCommissionCustomizer(commissionCustomizer);
+        }
 
         for (const [ symbol, symbolDirectives, ] of Object.entries(this.#directives.symbols)) {
             await account.addSymbol({
@@ -104,18 +109,18 @@ export class MidaBacktestPreset {
 
         engine.waitFeedConfirmation = true;
 
+        const trades: MidaPlaygroundTrade[] = [];
+
+        engine.on("trade", (e) => {
+            trades.push(e.descriptor.trade);
+        });
+
         await marketComponent({
             dependencies: {
                 target: {
                     type: target.type,
                     params: target.params,
                 },
-            },
-
-            state (): Record<string, any> {
-                return {
-                    currentDay: undefined,
-                };
             },
 
             watcher (): MidaMarketWatcherDirectives {
@@ -126,49 +131,24 @@ export class MidaBacktestPreset {
                 };
             },
 
-            async tick (tick: MidaTick): Promise<void> {
-                const date = tick.date;
-
-                if (this.currentDay !== date.weekDay) {
-                    let day: MidaDate = date;
-
-                    day = day.setHours(0);
-                    day = day.setMinutes(0);
-                    day = day.setSeconds(0);
-                    day = day.setMilliseconds(0);
-
-                    this.currentDay = date.weekDay;
-
-                    equityCurve[day.iso.split("T")[0]] = await this.$tradingAccount.getEquity();
-
-                    logger.info("Backtester | Processed one day");
-                }
-
-                const openPositions: MidaPosition[] = await this.$tradingAccount.getOpenPositions();
-
-                for (let i = 0, length = openPositions.length; i < length; ++i) {
-                    positions.set(openPositions[i].id, openPositions[i] as MidaPlaygroundPosition);
-                }
-            },
-
             async lateUpdate (): Promise<void> {
                 engine.nextFeed();
             },
         })(account, target.symbol);
 
-        await engine.elapseTime((date(target.to ?? this.#directives.to).timestamp - engine.localDate.timestamp) / 1000);
+        const toTimestamp: number = date(target.to ?? this.#directives.to).timestamp;
 
-        let realizedProfit: MidaDecimal = decimal(0);
+        while (engine.localDate.timestamp < toTimestamp) {
+            const remainingSeconds: number = (toTimestamp - engine.localDate.timestamp) * 1000;
 
-        for (const position of positions.values()) {
-            realizedProfit = realizedProfit.add(position.realizedProfit);
+            await engine.elapseTime(remainingSeconds > 86400 ? 86400 : remainingSeconds);
         }
 
         return {
+            from: date(target.from ?? this.#directives.from).iso,
+            to: date(target.to ?? this.#directives.to).iso,
             tradingAccount: account,
-            equityCurve,
-            positions: [ ...positions.values(), ],
-            realizedProfit,
+            tradingStatistics: getTradesStatistics(trades),
         };
     }
 }

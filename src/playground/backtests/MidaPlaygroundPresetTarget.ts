@@ -23,7 +23,7 @@
 import { MidaMarketComponentConstructor, } from "#components/MidaMarketComponentConstructor";
 import { MidaDateConvertible, } from "#dates/MidaDateConvertible";
 
-export type MidaBacktestPresetTarget = {
+export type MidaPlaygroundPresetTarget = {
     from?: MidaDateConvertible;
     to?: MidaDateConvertible;
     type: MidaMarketComponentConstructor;

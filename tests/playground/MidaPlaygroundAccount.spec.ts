@@ -28,7 +28,7 @@ import { MidaPosition, } from "#positions/MidaPosition";
 import { MidaPositionDirection, } from "#positions/MidaPositionDirection";
 import { MidaPositionStatus, } from "#positions/MidaPositionStatus";
 import { MidaTick, } from "#ticks/MidaTick";
-import { readTicksFromFile, } from "#utilities/MidaFileSystem";
+import { ticksGenerator, } from "#utilities/MidaGenerators";
 import { MidaPlaygroundEngine, } from "!/src/playground/MidaPlaygroundEngine";
 import { MidaPlaygroundPosition, } from "!/src/playground/positions/MidaPlaygroundPosition";
 
@@ -49,9 +49,9 @@ describe("MidaPlaygroundAccount", () => {
 
     async function createEngine (): Promise<MidaPlaygroundEngine> {
         const engine = new MidaPlaygroundEngine({ localDate: "2022-01-01T00:00:00.000Z", });
-        const ticksGenerator: AsyncGenerator<MidaTick | undefined> = readTicksFromFile("./series/ETHUSD.csv", "ETHUSD");
+        const generator: AsyncGenerator<MidaTick | undefined> = ticksGenerator("./series/ETHUSD.csv", "ETHUSD");
 
-        engine.setTicksGenerator("ETHUSD", ticksGenerator);
+        engine.setTicksGenerator("ETHUSD", generator);
         await engine.elapseTicks(1);
 
         return engine;

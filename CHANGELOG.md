@@ -1,5 +1,6 @@
 ## Features
 #### Platforms
+* Playground | Add trades statistics and calculate trades gross profit (silent release) [#134](https://github.com/Reiryoku-Technologies/Mida/pull/134)
 * Playground | Use generators and improve performance (silent release) [#113](https://github.com/Reiryoku-Technologies/Mida/pull/113)
 
 2023.8.1 - 08-06-2023

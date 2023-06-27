@@ -37,7 +37,7 @@ export const closeFileReader = (file: string): void => {
     openReaders.get(file)?.close();
 };
 
-export const readTicksFromFile = async function* (file: string, symbol: string): AsyncGenerator<MidaTick | undefined> {
+export async function* ticksGenerator (file: string, symbol: string): AsyncGenerator<MidaTick | undefined> {
     const reader: readline.Interface = readline.createInterface({
         input: fs.createReadStream(file),
         crlfDelay: Infinity,
@@ -69,9 +69,9 @@ export const readTicksFromFile = async function* (file: string, symbol: string):
     closeFileReader(file);
 
     return undefined;
-};
+}
 
-export const readPeriodsFromFile = async function* (file: string, symbol: string, timeframe: MidaTimeframe): AsyncGenerator<MidaPeriod | undefined> {
+export async function* periodsGenerator (file: string, symbol: string, timeframe: MidaTimeframe): AsyncGenerator<MidaPeriod | undefined> {
     const reader: readline.Interface = readline.createInterface({
         input: fs.createReadStream(file),
         crlfDelay: Infinity,
@@ -110,4 +110,4 @@ export const readPeriodsFromFile = async function* (file: string, symbol: string
     closeFileReader(file);
 
     return undefined;
-};
+}
