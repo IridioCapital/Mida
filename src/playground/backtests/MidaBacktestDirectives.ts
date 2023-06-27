@@ -23,10 +23,12 @@
 import { MidaDateConvertible, } from "#dates/MidaDateConvertible";
 import { MidaDecimalConvertible, } from "#decimals/MidaDecimalConvertible";
 import { MidaBacktestSymbolDirectives, } from "!/src/playground/backtests/MidaBacktestSymbolDirectives";
+import { MidaPlaygroundCommissionCustomizer, } from "!/src/playground/customizers/MidaPlaygroundCommissionCustomizer";
 
 export type MidaBacktestDirectives = {
     from: MidaDateConvertible;
     to: MidaDateConvertible;
     balanceSheet: Record<string, MidaDecimalConvertible>;
     symbols: Record<string, MidaBacktestSymbolDirectives>;
+    commissionCustomizer?: MidaPlaygroundCommissionCustomizer;
 };

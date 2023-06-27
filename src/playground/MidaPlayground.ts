@@ -81,12 +81,12 @@ export { MidaPlaygroundAccount, } from "!/src/playground/accounts/MidaPlayground
 export { MidaPlaygroundAccountConfiguration, } from "!/src/playground/accounts/MidaPlaygroundAccountConfiguration";
 export { MidaPlaygroundAccountParameters, } from "!/src/playground/accounts/MidaPlaygroundAccountParameters";
 
-export { MidaBacktest, } from "!/src/playground/backtests/MidaBacktest";
 export { MidaBacktestDirectives, } from "!/src/playground/backtests/MidaBacktestDirectives";
-export { backtestPreset, MidaBacktestPreset, } from "!/src/playground/backtests/MidaBacktestPreset";
-export { MidaBacktestPresetParameters, } from "!/src/playground/backtests/MidaBacktestPresetParameters";
-export { MidaBacktestPresetTarget, } from "!/src/playground/backtests/MidaBacktestPresetTarget";
+export { MidaBacktestStatistics, } from "!/src/playground/backtests/MidaBacktestStatistics";
 export { MidaBacktestSymbolDirectives, } from "!/src/playground/backtests/MidaBacktestSymbolDirectives";
+export { playgroundPreset, MidaPlaygroundPreset, } from "!/src/playground/backtests/MidaPlaygroundPreset";
+export { MidaPlaygroundPresetParameters, } from "!/src/playground/backtests/MidaPlaygroundPresetParameters";
+export { MidaPlaygroundPresetTarget, } from "!/src/playground/backtests/MidaPlaygroundPresetTarget";
 
 export { MidaPlaygroundCommissionCustomizer, } from "!/src/playground/customizers/MidaPlaygroundCommissionCustomizer";
 export { MidaPlaygroundLatencyCustomizer, } from "!/src/playground/customizers/MidaPlaygroundLatencyCustomizer";

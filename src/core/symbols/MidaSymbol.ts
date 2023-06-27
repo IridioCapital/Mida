@@ -133,14 +133,14 @@ export class MidaSymbol {
         return this.#tradingAccount.getSymbolAverage(this.#symbol);
     }
 
-    /** Used to get the symbol current funding descriptor */
-    public async getFundingDescriptor (): Promise<MidaSymbolFundingDescriptor> {
-        return this.#tradingAccount.getSymbolFundingDescriptor(this.#symbol);
-    }
-
     /** Indicates if the symbol market is open */
     public async isMarketOpen (): Promise<boolean> {
         return this.#tradingAccount.isSymbolMarketOpen(this.#symbol);
+    }
+
+    /** Used to get the symbol current funding descriptor */
+    public async getFundingDescriptor (): Promise<MidaSymbolFundingDescriptor> {
+        return this.#tradingAccount.getSymbolFundingDescriptor(this.#symbol);
     }
 
     /** Used to get the string representation of the symbol */

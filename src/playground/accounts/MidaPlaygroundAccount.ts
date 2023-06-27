@@ -327,5 +327,6 @@ export class MidaPlaygroundAccount extends MidaTradingAccount {
         this.#engine.on("tick", (event: MidaEvent): void => this.#onTick(event.descriptor.tick));
         this.#engine.on("period-update", (event: MidaEvent): void => this.#onPeriodUpdate(event.descriptor.period));
         this.#engine.on("period-close", (event: MidaEvent): void => this.#onPeriodClose(event.descriptor.period));
+        // TODO: Emit relative order and trade events
     }
 }

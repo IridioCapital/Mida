@@ -41,7 +41,5 @@ export type MidaOrderDirectives = {
     label?: string;
     clientOrderId?: string;
     postOnly?: boolean;
-    listeners?: {
-        [eventType: string]: MidaEventListener;
-    };
+    listeners?: Record<string, MidaEventListener>;
 };

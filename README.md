@@ -5,7 +5,7 @@
 </p>
 <br>
 <p align="center">
-    <b>The open-source and cross-platform trading framework :chart_with_upwards_trend:</b>
+    <b>The open-source and cross-platform trading engine :chart_with_upwards_trend:</b>
     <br><br>
     <a href="https://www.mida.org">Home</a> &mdash;
     <a href="https://www.mida.org/documentation">Documentation</a> &mdash;
@@ -47,7 +47,7 @@
 * [Contributors](#contributors)
 
 ## Introduction
-Mida is an open-source and cross-platform trading framework developed by Reiryoku Technologies and its contributors.
+Mida is an open-source and cross-platform trading engine developed by Reiryoku Technologies and its contributors.
 Designed from the ground up to provide a solid, versatile and platform-neutral
 environment for creating algorithmic trading systems, indicators, market analysis tools or just trading
 applications depending on use cases.<br>

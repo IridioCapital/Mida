@@ -22,6 +22,6 @@
 
 import { MidaBacktestDirectives, } from "!/src/playground/backtests/MidaBacktestDirectives";
 
-export type MidaBacktestPresetParameters = {
+export type MidaPlaygroundPresetParameters = {
     directives: MidaBacktestDirectives;
 };
