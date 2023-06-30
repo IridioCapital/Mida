@@ -1,0 +1,5 @@
+namespace Mida {
+    class MidaBar {
+
+    }
+}
