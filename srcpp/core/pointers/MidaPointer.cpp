@@ -1,4 +1,4 @@
-#include "Pointer.h";
+#include "Pointer.h"
 
 using namespace Mida;
 
