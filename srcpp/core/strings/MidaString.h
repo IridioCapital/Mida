@@ -3,28 +3,39 @@
 namespace Mida {
     namespace {
         unsigned int charArrayLength (char* array) {
-            unsigned int i = 0;
+            unsigned int counter = 0;
 
             while (*array != '\0') {
-                ++i;
+                ++counter;
                 ++array;
             }
 
-            return i;
+            return counter;
         }
     }
 
     class MidaString {
         private:
 
-        char* array;
+        const char* array;
+        const unsigned int length;
 
         public:
 
         MidaString ();
-        MidaString (char* array);
+        MidaString (const char* array);
+        ~MidaString ();
 
-        MidaVector<MidaString>& split (char* pattern);
+        MidaVector<MidaString>& split (const char* pattern) const;
+        MidaVector<MidaString>& split (const char* pattern, int limit) const;
+
+        MidaString& removeAt (unsigned int i) const;
+
+        bool operator == (const char* array) const;
+        bool operator == (const MidaString& string) const;
+        MidaString& operator += (const char* array) const;
+        MidaString& operator += (MidaString& string) const;
+        MidaString& operator [] (unsigned int i) const;
 
         unsigned int length () const;
     }

@@ -1,4 +1,4 @@
-#include "MidaVector.h";
+#include "MidaVector.h"
 
 using namespace Mida;
 
