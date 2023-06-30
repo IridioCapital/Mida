@@ -1,11 +1,11 @@
-import { login, marketWatcher, MidaTimeframe, } from "@reiryoku/mida";
+import { connect, marketWatcher, MidaTimeframe, } from "@reiryoku/mida";
 
 /*
  * Listen real-time Bitcoin candles being closed
  */
 
 // More account login examples at https://www.mida.org/documentation/essentials/login.html
-const myAccount = await login("cTrader", {
+const myAccount = await connect("cTrader", {
     clientId: "***",
     clientSecret: "***",
     accessToken: "***",
