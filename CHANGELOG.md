@@ -1,3 +1,5 @@
+2023.10.0 - 30-06-2023
+===================
 ## Features
 #### Core
 * Add `getOrdersHistory()` and `getTradesHistory()` to `MidaTradingAccount` [#137](https://github.com/Reiryoku-Technologies/Mida/pull/137), [#132](https://github.com/Reiryoku-Technologies/Mida/issues/132)
