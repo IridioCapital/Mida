@@ -1,11 +1,11 @@
-import { login, marketWatcher, } from "@reiryoku/mida";
+import { connect, marketWatcher, } from "@reiryoku/mida";
 
 /*
  * Listen real-time Bitcoin price updates
  */
 
 // More account login examples at https://www.mida.org/documentation/essentials/login.html
-const myAccount = await login("cTrader", {
+const myAccount = await connect("cTrader", {
     clientId: "***",
     clientSecret: "***",
     accessToken: "***",

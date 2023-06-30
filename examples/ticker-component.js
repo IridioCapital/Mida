@@ -1,11 +1,11 @@
-import { login, marketComponent, } from "@reiryoku/mida";
+import { connect, marketComponent, } from "@reiryoku/mida";
 
 /*
  * A simple real-time market component logging the Gold price and spread
  */
 
 // More account login examples at https://www.mida.org/documentation/essentials/login.html
-const myAccount = await login("cTrader", {
+const myAccount = await connect("cTrader", {
     clientId: "***",
     clientSecret: "***",
     accessToken: "***",
