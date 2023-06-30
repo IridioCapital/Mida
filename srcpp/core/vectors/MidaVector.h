@@ -4,7 +4,7 @@ namespace Mida {
     static const int SHRINK_FACTOR = 4;
 
     template <class T>
-    class Vector {
+    class MidaVector {
         private:
 
         T* array;
@@ -13,10 +13,13 @@ namespace Mida {
 
         public:
 
-        explicit Vector ();
+        explicit MidaVector ();
+        ~MidaVector ();
 
-        long int push (T element);
-        T pop ();
+        long int push (T& element);
+        T& pop ();
+        T& shift ();
+        T& removeAt (long int index);
         long int length () const;
         &T operator [] (long int index) const;
     }
