@@ -1,3 +1,10 @@
+## Features
+#### Core
+* Add `getOrdersHistory()` and `getTradesHistory()` to `MidaTradingAccount` [#137](https://github.com/Reiryoku-Technologies/Mida/pull/137), [#132](https://github.com/Reiryoku-Technologies/Mida/issues/132)
+
+#### Platforms
+* cTrader | Add support for `getOrdersHistory()` and `getTradesHistory()` [#137](https://github.com/Reiryoku-Technologies/Mida/pull/137)
+
 2023.9.0 - 27-06-2023
 ===================
 ## Features

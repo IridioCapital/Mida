@@ -264,6 +264,24 @@ export abstract class MidaTradingAccount {
         throw unsupportedOperationError(this.#platform);
     }
 
+    /**
+     * Used to get the account orders in a specific time range
+     * @param fromTimestamp The start of the time range
+     * @param toTimestamp The end of the time range
+     */
+    public async getOrdersHistory (fromTimestamp: number, toTimestamp: number): Promise<MidaOrder[]> {
+        throw unsupportedOperationError(this.#platform);
+    }
+
+    /**
+     * Used to get the account trades in a specific time range
+     * @param fromTimestamp The start of the time range
+     * @param toTimestamp The end of the time range
+     */
+    public async getTradesHistory (fromTimestamp: number, toTimestamp: number): Promise<MidaTrade[]> {
+        throw unsupportedOperationError(this.#platform);
+    }
+
     /** Used to get the trading platform date */
     public abstract getDate (): Promise<MidaDate>;
 
