@@ -11,6 +11,6 @@ MidaPointer::~MidaPointer () {
     delete this -> pointer;
 }
 
-T& operator * () {
+T& MidaPointer::operator * () {
     return this -> *pointer;
 }
