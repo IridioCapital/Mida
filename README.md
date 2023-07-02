@@ -66,8 +66,8 @@ easily executed on different trading platforms.
 
 <br><br>
 <p align="center">
-    <img src="images/platforms-light.svg#gh-light-mode-only" width="582px">
-    <img src="images/platforms-dark.svg#gh-dark-mode-only" width="582px">
+    <img src="images/platforms-light.svg#gh-light-mode-only" width="562px">
+    <img src="images/platforms-dark.svg#gh-dark-mode-only" width="562px">
 </p>
 <br><br>
 
