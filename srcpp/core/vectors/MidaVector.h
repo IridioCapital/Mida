@@ -13,7 +13,7 @@ namespace Mida {
 
         public:
 
-        explicit MidaVector ();
+        MidaVector<T> (T);
         ~MidaVector ();
 
         long int push (T& element);

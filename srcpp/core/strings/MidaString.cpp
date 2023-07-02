@@ -1,4 +1,3 @@
-#include <iostream>
 #include "MidaString.h"
 
 using namespace Mida;
@@ -30,6 +29,10 @@ MidaString::MidaString (const char* array) {
 	}
 }
 
+MidaString::~MidaString() {
+    delete[] this -> array;
+}
+
 bool MidaString::operator == (const char* operand) const {
 	if (this -> length != charArrayLength(operand)) {
 		return false;
@@ -51,8 +54,6 @@ bool MidaString::operator == (const MidaString& string) const {
 MidaString& MidaString::operator [] (long int index) const {
     long int normalizedIndex = index;
 
-    std::cout << "test";
-
     if (index < 0) {
         normalizedIndex = this -> length + index;
     }
@@ -65,8 +66,6 @@ MidaString& MidaString::operator [] (long int index) const {
         this -> array[normalizedIndex],
         '\0',
     };
-
-    std::cout << modifiedArray;
 
     return *(new MidaString(modifiedArray));
 }
@@ -95,13 +94,79 @@ MidaString& MidaString::removeAt (long int index) const {
         }
     }
 
-    return *(new MidaString(modifiedArray));
+    return *new MidaString(modifiedArray);
 }
 
 long int MidaString::getLength() const {
     return this -> length;
 }
 
-const char* MidaString::get () const {
+const char* MidaString::getArray () const {
     return this -> array;
+}
+
+MidaString& MidaString::operator + (const char* operand) const {
+    long int operandLength = charArrayLength(operand);
+    char* modifiedArray = new char[this -> length + operandLength];
+    long int modifiedArrayIndex = 0;
+
+    for (long int i = 0; i < this -> length; ++i) {
+        modifiedArray[modifiedArrayIndex++] = this -> array[i];
+    }
+
+    for (long int i = 0; i < operandLength; ++i) {
+        modifiedArray[modifiedArrayIndex++] = operand[i];
+    }
+
+    return *new MidaString(modifiedArray);
+}
+
+MidaString& MidaString::operator + (const MidaString& operand) const {
+    return *this + operand.array;
+}
+
+MidaString& MidaString::operator += (const char* operand) {
+    return *this = *this + operand;
+}
+
+MidaString& MidaString::operator += (const MidaString& operand) {
+    return *this = *this + operand.array;
+}
+
+long int MidaString::find (const char* pattern) const {
+    long int patternLength = charArrayLength(pattern);
+
+    if (this -> length < patternLength) {
+        return -1;
+    }
+
+    if (this -> length == patternLength && this -> array[0] != pattern[0]) {
+        return -1;
+    }
+
+    for (long int i = 0; i < this -> length; ++i) {
+        long int pivotIndex = i;
+
+        if (this -> array[pivotIndex] != pattern[0]) {
+            continue;
+        }
+
+        for (long int j = 1; j < patternLength; ++j) {
+            if (this -> array[++i] != pattern[j]) {
+                pivotIndex = -1;
+
+                break;
+            }
+        }
+
+        if (pivotIndex != -1) {
+            return pivotIndex;
+        }
+    }
+
+    return -1;
+}
+
+long int MidaString::find (const MidaString& pattern) const {
+    return this -> find(pattern.array);
 }

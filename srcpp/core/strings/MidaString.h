@@ -22,7 +22,10 @@ namespace Mida {
 
         explicit MidaString ();
         explicit MidaString (const char* array);
-        //~MidaString ();
+        ~MidaString ();
+
+        long int find (const char* pattern) const;
+        long int find (const MidaString& pattern) const;
 
         /*
         MidaVector<MidaString>& split (const char* pattern) const;
@@ -33,13 +36,15 @@ namespace Mida {
         bool operator == (const char* array) const;
         bool operator == (const MidaString& string) const;
 
-        /*
-        MidaString& operator += (const char* array) const;
-        MidaString& operator += (MidaString& string) const;*/
+        MidaString& operator + (const char* operand) const;
+        MidaString& operator + (const MidaString& operand) const;
+
+        MidaString& operator += (const char* operand);
+        MidaString& operator += (const MidaString& operand);
         MidaString& operator [] (long int i) const;
 
         long int getLength () const;
 
-        const char* get () const;
+        const char* getArray () const;
     };
 }
