@@ -1,3 +1,4 @@
+#include <iostream>
 #include "MidaString.h"
 
 using namespace Mida;
@@ -10,34 +11,32 @@ MidaString::MidaString () {
 
 MidaString::MidaString (const char* array) {
 	if (array == nullptr) {
-		*this = MidaString();
+        this -> array = new char[1];
+        this -> array[0] = '\0';
+        this -> length = 0;
 	}
 	else {
-		unsigned int length = charArrayLength(array);
-		char* extendedArray = new char[length + 1];
+		unsigned int inputArrayLength = charArrayLength(array);
+		char* extendedArray = new char[inputArrayLength + 1];
 
-		for (unsigned int i = 0; i < length; ++i) {
+		for (unsigned int i = 0; i < inputArrayLength; ++i) {
 			extendedArray[i] = array[i];
 		}
 
-		extendedArray[length] = '\0';
+		extendedArray[inputArrayLength] = '\0';
 
 		this -> array = extendedArray;
-		this -> length = length;
+		this -> length = inputArrayLength;
 	}
 }
 
 bool MidaString::operator == (const char* operand) const {
-	unsigned int length = this -> length;
-
-	if (length != charArrayLength(operand)) {
+	if (this -> length != charArrayLength(operand)) {
 		return false;
 	}
 
-	char* array = this -> array;
-
 	for (unsigned int i = 0; i < length; ++i) {
-		if (array[i] != operand[i]) {
+		if (this -> array[i] != operand[i]) {
 			return false;
 		}
 	}
@@ -46,35 +45,63 @@ bool MidaString::operator == (const char* operand) const {
 }
 
 bool MidaString::operator == (const MidaString& string) const {
-	return this == string -> array;
+	return *this == string.array;
 }
 
-MidaString& MidaString::operator [] (unsigned int i) const {
-    unsigned int length = this -> length;
-    unsigned int normalizedIndex = index;
+MidaString& MidaString::operator [] (long int index) const {
+    long int normalizedIndex = index;
+
+    std::cout << "test";
 
     if (index < 0) {
-        normalizedIndex = length - index;
+        normalizedIndex = this -> length + index;
     }
 
-    if (normalizedIndex < 0 || normalizedIndex >= length) {
+    if (normalizedIndex < 0 || normalizedIndex >= this -> length) {
         throw;
     }
 
-    return new MidaString({ *(this -> array + index), });
+    char* modifiedArray = new char[2] {
+        this -> array[normalizedIndex],
+        '\0',
+    };
+
+    std::cout << modifiedArray;
+
+    return *(new MidaString(modifiedArray));
 }
 
-MidaString& MidaString::removeAt (unsigned int i) const {
-    long int length = this -> length;
+MidaString& MidaString::removeAt (long int index) const {
     long int normalizedIndex = index;
 
     if (index < 0) {
-        normalizedIndex = length - index;
+        normalizedIndex = this -> length + index;
     }
 
-    if (normalizedIndex < 0 || normalizedIndex >= length) {
+    if (normalizedIndex < 0 || normalizedIndex >= this -> length) {
         throw;
     }
 
-    return new MidaString();
+    char* modifiedArray = new char[this -> length - 1];
+    long int modifiedArrayIndex = 0;
+
+    for (long int i = 0; i < this -> length; ++i) {
+        if (i == normalizedIndex) {
+            continue;
+        }
+
+        else {
+            modifiedArray[modifiedArrayIndex++] = this -> array[i];
+        }
+    }
+
+    return *(new MidaString(modifiedArray));
+}
+
+long int MidaString::getLength() const {
+    return this -> length;
+}
+
+const char* MidaString::get () const {
+    return this -> array;
 }

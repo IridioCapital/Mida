@@ -1,5 +1,6 @@
 build
 node_modules
+srcpp/cmake-build-debug
 .idea
 .vscode
 **/.DS_Store

@@ -1,8 +1,6 @@
-#include "../vectors/MidaVector.h";
-
 namespace Mida {
     namespace {
-        unsigned int charArrayLength (char* array) {
+        unsigned int charArrayLength (const char* array) {
             unsigned int counter = 0;
 
             while (*array != '\0') {
@@ -17,26 +15,31 @@ namespace Mida {
     class MidaString {
         private:
 
-        const char* array;
-        const unsigned int length;
+        char* array;
+        long int length;
 
         public:
 
-        MidaString ();
-        MidaString (const char* array);
-        ~MidaString ();
+        explicit MidaString ();
+        explicit MidaString (const char* array);
+        //~MidaString ();
 
+        /*
         MidaVector<MidaString>& split (const char* pattern) const;
-        MidaVector<MidaString>& split (const char* pattern, int limit) const;
+        MidaVector<MidaString>& split (const char* pattern, int limit) const;*/
 
-        MidaString& removeAt (unsigned int i) const;
+        MidaString& removeAt (long int i) const;
 
         bool operator == (const char* array) const;
         bool operator == (const MidaString& string) const;
-        MidaString& operator += (const char* array) const;
-        MidaString& operator += (MidaString& string) const;
-        MidaString& operator [] (unsigned int i) const;
 
-        unsigned int length () const;
-    }
+        /*
+        MidaString& operator += (const char* array) const;
+        MidaString& operator += (MidaString& string) const;*/
+        MidaString& operator [] (long int i) const;
+
+        long int getLength () const;
+
+        const char* get () const;
+    };
 }
