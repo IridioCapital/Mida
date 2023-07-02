@@ -16,4 +16,4 @@ include_directories(indicators/simple-moving-average)
 add_executable(srcpp
         core/strings/MidaString.cpp
         core/strings/MidaString.h
-        main.cpp)
+        main.cpp core/vectors/MidaVector.cpp)

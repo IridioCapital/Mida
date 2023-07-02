@@ -3,11 +3,7 @@
 using namespace Mida;
 
 template <class T>
-MidaVector::MidaVector () {
-    this -> array = new T[MIN_CAPACITY];
-}
-
-MidaVector::~MidaVector () {
+MidaVector<T>::~MidaVector () {
     delete[] this -> array;
     delete this;
 }
@@ -84,7 +80,7 @@ long int MidaVector::length () const {
 }
 
 template <class T>
-T& MidaVector<T>::operator [] (long int index) {
+T& MidaVector<T>::operator [] (long int index) const {
     long int length = this -> length;
     long int normalizedIndex = index;
 
