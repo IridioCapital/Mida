@@ -5,7 +5,7 @@
 </p>
 <br>
 <p align="center">
-    <b>The open-source and cross-platform trading engine :boom:</b>
+    <b>The open-source and cross-platform trading engine :chart_with_upwards_trend:</b>
     <br><br>
     <a href="https://www.mida.org">Home</a> &mdash;
     <a href="https://www.mida.org/documentation">Documentation</a> &mdash;
