@@ -1,14 +1,19 @@
+#include "../strings/MidaString.h"
+
 namespace Mida {
 	class MidaEvent {
 		private:
-		const MidaString* name;
+
+		const MidaString& name;
 
 		public:
 
 		MidaEvent ();
+        MidaEvent (const char* name);
 		MidaEvent (const MidaString& name);
+
 		~MidaEvent ();
 
-		MidaString& getName () const;
-	}
+		const MidaString& getName () const;
+	};
 }
