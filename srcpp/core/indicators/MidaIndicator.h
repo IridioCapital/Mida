@@ -6,9 +6,9 @@ namespace Mida {
 	class MidaIndicator {
 		private:
 
-        const MidaString& name;
-		const MidaVector<T>& input;
-        const MidaVector<T>& output;
+        MidaString& name;
+		MidaVector<T>& input;
+        MidaVector<T>& output;
 
 		public:
 
@@ -17,42 +17,59 @@ namespace Mida {
 		MidaIndicator (const MidaString& name);
         ~MidaIndicator ();
 
-		virtual MidaVector<T>& feed (MidaVector<T>& values) = 0;
+		const MidaVector<T>& feed (const MidaVector<T>& values);
 
         const MidaString& getName () const;
 
-        const MidaVector<T>& getInput () const;
+        MidaVector<T>& getInput () const;
         long int getInputLength () const;
 
-        const MidaVector<T>& getOutput () const;
+        MidaVector<T>& getOutput () const;
         long int getOutputLength () const;
+
+        T operator [] (long int index) const;
+
+        protected:
+
+        virtual void compute () = 0;
 	};
 
     template <class T>
-    MidaIndicator<T>::MidaIndicator() {
-        this -> name = new MidaString();
+    MidaIndicator<T>::MidaIndicator()
+        : name(*new MidaString("")), input(*new MidaVector<T>()), output(*new MidaVector<T>()){
         this -> input = *new MidaVector<T>();
         this -> output = *new MidaVector<T>();
     }
 
     template <class T>
-    MidaIndicator<T>::MidaIndicator(const MidaString& name) {
-        this -> name = name;
-        this -> input = *new MidaVector<T>();
-        this -> output = *new MidaVector<T>();
+    MidaIndicator<T>::MidaIndicator(const MidaString& name)
+        : name(*new MidaString(name)), input(*new MidaVector<T>()), output(*new MidaVector<T>()) {
     }
 
     template <class T>
     MidaIndicator<T>::MidaIndicator(const char* name) {
-        this -> name = new MidaString(name);
+        this -> name = *new MidaString(name);
         this -> input = *new MidaVector<T>();
         this -> output = *new MidaVector<T>();
     }
 
     template <class T>
     MidaIndicator<T>::~MidaIndicator() {
-        delete this -> input;
-        delete this -> output;
+
+    }
+
+    template <class T>
+    const MidaVector<T>& MidaIndicator<T>::feed (const MidaVector<T> &values) {
+        const long int length = values.getLength();
+        MidaVector<T>& currentInput = this -> input;
+
+        for (unsigned int i = 0; i < length; ++i) {
+            currentInput.push(values[i]);
+        }
+
+        this -> compute();
+
+        return this -> output;
     }
 
     template<class T>
@@ -66,7 +83,7 @@ namespace Mida {
     }
 
     template <class T>
-    const MidaVector<T>& MidaIndicator<T>::getInput () const {
+    MidaVector<T>& MidaIndicator<T>::getInput () const {
         return this -> input;
     }
 
@@ -76,7 +93,12 @@ namespace Mida {
     }
 
     template <class T>
-    const MidaVector<T>& MidaIndicator<T>::getOutput () const {
-        return this -> outputs;
+    MidaVector<T>& MidaIndicator<T>::getOutput () const {
+        return this -> output;
+    }
+
+    template <class T>
+    T MidaIndicator<T>::operator [] (long int index) const {
+        return this -> output[index];
     }
 }
