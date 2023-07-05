@@ -1,3 +1,8 @@
+#pragma once
+
+#include <iostream>
+using namespace std;
+
 namespace Mida {
     static const int MIN_CAPACITY = 16;
     static const int GROWTH_FACTOR = 2;
@@ -18,8 +23,8 @@ namespace Mida {
 
         long int push (T element);
 
-        T& pop ();
-        T& shift ();
+        T* pop ();
+        T* shift ();
         T* removeAt (long int index);
 
         long int getLength () const;
@@ -62,12 +67,12 @@ namespace Mida {
     }
 
     template <class T>
-    T& MidaVector<T>::pop () {
+    T* MidaVector<T>::pop () {
         return this -> array[--length];
     }
 
     template <class T>
-    T& MidaVector<T>::shift () {
+    T* MidaVector<T>::shift () {
         const long int currentLength = this -> length;
         T* currentArray = this -> array;
         T& element = currentArray[0];
@@ -117,14 +122,14 @@ namespace Mida {
         long int normalizedIndex = index;
 
         if (index < 0) {
-            normalizedIndex = currentLength - index;
+            normalizedIndex = currentLength + index;
         }
 
         if (normalizedIndex < 0 || normalizedIndex >= currentLength) {
             throw;
         }
 
-        return this -> array[index];
+        return this -> array[normalizedIndex];
     }
 }
 

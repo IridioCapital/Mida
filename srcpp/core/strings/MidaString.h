@@ -1,17 +1,4 @@
 namespace Mida {
-    namespace {
-        unsigned int charArrayLength (const char* array) {
-            unsigned int counter = 0;
-
-            while (*array != '\0') {
-                ++counter;
-                ++array;
-            }
-
-            return counter;
-        }
-    }
-
     class MidaString {
         private:
 
@@ -47,4 +34,7 @@ namespace Mida {
 
         const char* getArray () const;
     };
+
+    MidaString& string (const char* array);
+    MidaString& string (const MidaString& string);
 }

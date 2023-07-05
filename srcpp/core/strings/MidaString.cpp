@@ -1,4 +1,5 @@
 #include "MidaString.h"
+#include "../utilities/MidaUtilities.h"
 
 using namespace Mida;
 
@@ -15,7 +16,7 @@ MidaString::MidaString (const char* array) {
         this -> length = 0;
 	}
 	else {
-		unsigned int inputArrayLength = charArrayLength(array);
+		unsigned int inputArrayLength = Utilities::getCharArrayLength(array);
 		char* extendedArray = new char[inputArrayLength + 1];
 
 		for (unsigned int i = 0; i < inputArrayLength; ++i) {
@@ -34,7 +35,7 @@ MidaString::~MidaString() {
 }
 
 bool MidaString::operator == (const char* operand) const {
-	if (this -> length != charArrayLength(operand)) {
+	if (this -> length != Utilities::getCharArrayLength(operand)) {
 		return false;
 	}
 
@@ -106,7 +107,7 @@ const char* MidaString::getArray () const {
 }
 
 MidaString& MidaString::operator + (const char* operand) const {
-    long int operandLength = charArrayLength(operand);
+    long int operandLength = Utilities::getCharArrayLength(operand);
     char* modifiedArray = new char[this -> length + operandLength];
     long int modifiedArrayIndex = 0;
 
@@ -134,7 +135,7 @@ MidaString& MidaString::operator += (const MidaString& operand) {
 }
 
 long int MidaString::find (const char* pattern) const {
-    long int patternLength = charArrayLength(pattern);
+    long int patternLength = Utilities::getCharArrayLength(pattern);
 
     if (this -> length < patternLength) {
         return -1;
@@ -169,4 +170,12 @@ long int MidaString::find (const char* pattern) const {
 
 long int MidaString::find (const MidaString& pattern) const {
     return this -> find(pattern.array);
+}
+
+MidaString& string (const char* array) {
+    return *new MidaString(array);
+}
+
+MidaString& string (const MidaString& string) {
+    return *new MidaString(string.getArray());
 }
