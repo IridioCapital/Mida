@@ -18,6 +18,7 @@ namespace Mida {
         ~MidaIndicator ();
 
 		const MidaVector<T>& feed (const MidaVector<T>& values);
+        const MidaVector<T>& feed (const T& value);
 
         const MidaString& getName () const;
 
@@ -67,6 +68,14 @@ namespace Mida {
             currentInput.push(values[i]);
         }
 
+        this -> compute();
+
+        return this -> output;
+    }
+
+    template <class T>
+    const MidaVector<T>& MidaIndicator<T>::feed (const T& value) {
+        this -> input.push(value);
         this -> compute();
 
         return this -> output;

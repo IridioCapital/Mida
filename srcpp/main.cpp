@@ -9,34 +9,23 @@ int main () {
     /**
      * Testing Indicators
      */
-    SimpleMovingAverage<int>& a = *new SimpleMovingAverage<int>(2);
+    SimpleMovingAverage& a = *new SimpleMovingAverage(2);
 
     cout << a.getLength() << '\n';
     cout << "Output Length => " << a.getOutputLength() << '\n';
 
-    MidaVector<int>& input = *new MidaVector<int>();
-
-    input.push(100);
-    input.push(100);
-
-    a.feed(input);
+    a.feed(100);
+    a.feed(100);
 
     cout << "Output Length => " << a.getOutputLength() << '\n';
 
-
-
-
-
-    MidaVector<int>& input2 = *new MidaVector<int>();
-
-    input2.push(1000);
-    input2.push(2000);
-
-    a.feed(input2);
+    a.feed(1000);
+    a.feed(2000);
 
     cout << "Output Length => " << a.getOutputLength() << '\n';
     cout << "Output 0 => " << a[0] << '\n';
     cout << "Output 1 => " << a[1] << '\n';
+    cout << "Output 1 => " << a[2] << '\n';
 
     return 0;
 }
