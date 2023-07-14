@@ -71,7 +71,7 @@ export abstract class MidaTradingPlatform {
         MidaTradingPlatform.#installedPlatforms.set(id, platform);
     }
 
-    public static async login (id: string, parameters: Record<string, any>): Promise<MidaTradingAccount> {
+    public static async login (id: string, params: Record<string, any>): Promise<MidaTradingAccount> {
         const platform: MidaTradingPlatform | undefined = MidaTradingPlatform.#installedPlatforms.get(id);
 
         if (!platform) {
@@ -80,6 +80,6 @@ export abstract class MidaTradingPlatform {
             throw new Error();
         }
 
-        return platform.login(parameters);
+        return platform.login(params);
     }
 }

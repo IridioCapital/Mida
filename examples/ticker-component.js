@@ -4,7 +4,7 @@ import { connect, marketComponent, } from "@reiryoku/mida";
  * A simple real-time market component logging the Gold price and spread
  */
 
-// More account login examples at https://www.mida.org/documentation/essentials/login.html
+// More account login examples at https://www.mida.org/documentation/essentials/connect.html
 const myAccount = await connect("cTrader", {
     clientId: "***",
     clientSecret: "***",
@@ -17,7 +17,7 @@ const Ticker = marketComponent({
     name: "Ticker",
     computed: {
         spread () {
-            return this.$ask.subtract(this.$bid);
+            return this.$ask.sub(this.$bid);
         },
     },
     async tick () {

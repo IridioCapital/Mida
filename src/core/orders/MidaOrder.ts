@@ -471,26 +471,30 @@ export abstract class MidaOrder {
     }
 }
 
-export const filterPendingOrders = (orders: MidaOrder[]): MidaOrder[] => {
+export function filterPendingOrders (orders: MidaOrder[]): MidaOrder[] {
     const pendingOrders: MidaOrder[] = [];
 
-    for (const order of orders) {
+    for (let i = 0, length = pendingOrders.length; i < length; ++i) {
+        const order: MidaOrder = orders[i];
+
         if (order.status === MidaOrderStatus.PENDING) {
             pendingOrders.push(order);
         }
     }
 
     return pendingOrders;
-};
+}
 
-export const filterExecutedOrders = (orders: MidaOrder[]): MidaOrder[] => {
+export function filterExecutedOrders (orders: MidaOrder[]): MidaOrder[] {
     const executedOrders: MidaOrder[] = [];
 
-    for (const order of orders) {
-        if (order.isExecuted) {
+    for (let i = 0, length = executedOrders.length; i < length; ++i) {
+        const order: MidaOrder = orders[i];
+
+        if (order.status === MidaOrderStatus.EXECUTED) {
             executedOrders.push(order);
         }
     }
 
     return executedOrders;
-};
+}

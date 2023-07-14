@@ -43,8 +43,8 @@ export class MidaMarketWatcher {
     readonly #emitter: MidaEmitter;
     #tickListenerId?: string;
     #periodUpdateListenerId?: string;
-    #closedPeriodDetectorTimeoutId?: NodeJS.Timer;
-    #closedPeriodDetectorIntervalId?: NodeJS.Timer;
+    #closedPeriodDetectorTimeoutId: any;
+    #closedPeriodDetectorIntervalId: any;
 
     public constructor ({
         tradingAccount,
@@ -276,9 +276,9 @@ export class MidaMarketWatcher {
     }
 }
 
-// eslint-disable-next-line max-len
-export const marketWatcher = async (parameters: MidaMarketWatcherParameters, configuration: MidaMarketWatcherConfiguration = {}): Promise<MidaMarketWatcher> => {
-    const marketWatcher: MidaMarketWatcher = new MidaMarketWatcher(parameters);
+export
+async function marketWatcher (params: MidaMarketWatcherParameters, configuration: MidaMarketWatcherConfiguration = {}): Promise<MidaMarketWatcher> {
+    const marketWatcher: MidaMarketWatcher = new MidaMarketWatcher(params);
 
     for (const symbol of Object.keys(configuration)) {
         if (configuration.hasOwnProperty(symbol)) {
@@ -287,4 +287,16 @@ export const marketWatcher = async (parameters: MidaMarketWatcherParameters, con
     }
 
     return marketWatcher;
-};
+}
+
+export
+async function watchTicks (tradingAccount: MidaTradingAccount, symbol: string, listener: MidaEventListener): Promise<MidaMarketWatcher> {
+    const marketWatcher: MidaMarketWatcher = new MidaMarketWatcher({ tradingAccount, });
+
+    marketWatcher.on("tick", listener);
+    marketWatcher.watch(symbol, {
+        watchTicks: true,
+    });
+
+    return marketWatcher;
+}

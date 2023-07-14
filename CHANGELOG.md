@@ -1,3 +1,7 @@
+## Bug fixes
+#### Platforms
+* cTrader | Correctly assign `positionId` to historical orders [#140](https://github.com/Reiryoku-Technologies/Mida/issues/140), [#138](https://github.com/Reiryoku-Technologies/Mida/issues/138)
+
 2023.10.0 - 30-06-2023
 ===================
 ## Features
