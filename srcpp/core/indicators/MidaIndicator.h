@@ -1,14 +1,15 @@
+#pragma once
 #include "../strings/MidaString.h"
 #include "../vectors/MidaVector.h"
 
 namespace Mida {
-	template <class T = long double>
+	template <class T = long double, class U = long double>
 	class MidaIndicator {
 		private:
 
         MidaString& name;
 		MidaVector<T>& input;
-        MidaVector<T>& output;
+        MidaVector<U>& output;
 
 		public:
 
@@ -17,50 +18,50 @@ namespace Mida {
 		MidaIndicator (const MidaString& name);
         ~MidaIndicator ();
 
-		const MidaVector<T>& feed (const MidaVector<T>& values);
-        const MidaVector<T>& feed (const T& value);
+		const MidaVector<U>& feed (const MidaVector<T>& values);
+        const MidaVector<U>& feed (const T& value);
 
         const MidaString& getName () const;
 
         MidaVector<T>& getInput () const;
         long int getInputLength () const;
 
-        MidaVector<T>& getOutput () const;
+        MidaVector<U>& getOutput () const;
         long int getOutputLength () const;
 
-        T operator [] (long int index) const;
+        U operator [] (long int index) const;
 
         protected:
 
         virtual void compute () = 0;
 	};
 
-    template <class T>
-    MidaIndicator<T>::MidaIndicator()
+    template <class T, class U>
+    MidaIndicator<T, U>::MidaIndicator()
         : name(*new MidaString("")), input(*new MidaVector<T>()), output(*new MidaVector<T>()){
         this -> input = *new MidaVector<T>();
         this -> output = *new MidaVector<T>();
     }
 
-    template <class T>
-    MidaIndicator<T>::MidaIndicator(const MidaString& name)
+    template <class T, class U>
+    MidaIndicator<T, U>::MidaIndicator(const MidaString& name)
         : name(*new MidaString(name)), input(*new MidaVector<T>()), output(*new MidaVector<T>()) {
     }
 
-    template <class T>
-    MidaIndicator<T>::MidaIndicator(const char* name) {
+    template <class T, class U>
+    MidaIndicator<T, U>::MidaIndicator(const char* name) {
         this -> name = *new MidaString(name);
         this -> input = *new MidaVector<T>();
         this -> output = *new MidaVector<T>();
     }
 
-    template <class T>
-    MidaIndicator<T>::~MidaIndicator() {
+    template <class T, class U>
+    MidaIndicator<T, U>::~MidaIndicator() {
 
     }
 
-    template <class T>
-    const MidaVector<T>& MidaIndicator<T>::feed (const MidaVector<T> &values) {
+    template <class T, class U>
+    const MidaVector<U>& MidaIndicator<T, U>::feed (const MidaVector<T> &values) {
         const long int length = values.getLength();
         MidaVector<T>& currentInput = this -> input;
 
@@ -73,41 +74,41 @@ namespace Mida {
         return this -> output;
     }
 
-    template <class T>
-    const MidaVector<T>& MidaIndicator<T>::feed (const T& value) {
+    template <class T, class U>
+    const MidaVector<U>& MidaIndicator<T, U>::feed (const T& value) {
         this -> input.push(value);
         this -> compute();
 
         return this -> output;
     }
 
-    template<class T>
-    const MidaString& MidaIndicator<T>::getName() const {
+    template <class T, class U>
+    const MidaString& MidaIndicator<T, U>::getName() const {
         return this -> name;
     }
 
-    template <class T>
-    long int MidaIndicator<T>::getInputLength () const {
+    template <class T, class U>
+    long int MidaIndicator<T, U>::getInputLength () const {
         return this -> input.getLength();
     }
 
-    template <class T>
-    MidaVector<T>& MidaIndicator<T>::getInput () const {
+    template <class T, class U>
+    MidaVector<T>& MidaIndicator<T, U>::getInput () const {
         return this -> input;
     }
 
-    template <class T>
-    long int MidaIndicator<T>::getOutputLength () const {
+    template <class T, class U>
+    long int MidaIndicator<T, U>::getOutputLength () const {
         return this -> output.getLength();
     }
 
-    template <class T>
-    MidaVector<T>& MidaIndicator<T>::getOutput () const {
+    template <class T, class U>
+    MidaVector<U>& MidaIndicator<T, U>::getOutput () const {
         return this -> output;
     }
 
-    template <class T>
-    T MidaIndicator<T>::operator [] (long int index) const {
+    template <class T, class U>
+    U MidaIndicator<T, U>::operator [] (long int index) const {
         return this -> output[index];
     }
 }

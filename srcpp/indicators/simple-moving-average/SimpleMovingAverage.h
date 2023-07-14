@@ -16,6 +16,6 @@ namespace Mida {
 
         protected:
 
-        void compute ();
+        void compute () override;
     };
 }
