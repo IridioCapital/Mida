@@ -42,8 +42,17 @@ long int WilliamsPercentRange::getLength () const {
     return this -> length;
 }
 
+const MidaVector<long double>&
+WilliamsPercentRange::feed (const long double& high, const long double& low, const long double& close) {
+    MidaVector<MidaVector<long double>*>& currentInput = this -> getInput();
+
+    currentInput[0]->push(high);
+    currentInput[1]->push(low);
+    currentInput[2]->push(close);
+}
+
 void WilliamsPercentRange::compute () {
-    const MidaVector<const MidaVector<long double>*>& currentInput = this -> getInput();
+    const MidaVector<MidaVector<long double>*>& currentInput = this -> getInput();
     const MidaVector<long double>& highs = *currentInput[0];
     const MidaVector<long double>& lows = *currentInput[1];
     const MidaVector<long double>& closings = *currentInput[2];
