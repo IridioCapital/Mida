@@ -4,7 +4,7 @@ import { connect, marketWatcher, MidaTimeframe, } from "@reiryoku/mida";
  * Listen real-time Bitcoin candles being closed
  */
 
-// More account login examples at https://www.mida.org/documentation/essentials/login.html
+// More account login examples at https://www.mida.org/documentation/essentials/connect.html
 const myAccount = await connect("cTrader", {
     clientId: "***",
     clientSecret: "***",
