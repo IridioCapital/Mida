@@ -60,9 +60,8 @@ can be additionally enhanced with C++.<br>
 [Why JavaScript/TypeScript?](#why-javascripttypescript)
 
 ### Platforms
-Mida is platform-neutral, this means that virtually any trading platform could
-be easily integrated in the engine. Applications built with Mida can be
-easily executed on different trading platforms.
+Mida is platform-neutral, this means trading platforms could be easily integrated into the engine.
+Applications built with Mida can be easily executed on different trading platforms.
 
 <br><br>
 <p align="center">
@@ -140,7 +139,7 @@ const usedMargin = await myAccount.getUsedMargin();
 ```
 
 ### Orders, trades and positions
-How top open a long position for BTC/USDT.
+How to buy 1 Bitcoin (opening a long position for BTC/USDT).
 ```javascript
 import { MidaOrderDirection, } from "@reiryoku/mida";
 
@@ -221,6 +220,7 @@ const myOrder = await myAccount.placeOrder({
     symbol,
     direction: MidaOrderDirection.BUY,
     volume: 0.1,
+    limit: lastBid, // Limit order, remove to place a market order
     protection: {
         stopLoss: lastBid.sub(0.0010), // <= SL 10 pips
         takeProfit: lastBid.add(0.0030), // <= TP 30 pips
@@ -328,13 +328,24 @@ console.log(`Bitcoin price is ${price} USDT`);
 ### Ticks and candlesticks
 How to listen the real-time ticks of a symbol.
 ```javascript
-import { marketWatcher, } from "@reiryoku/mida";
+import { watchTicks, } from "@reiryoku/mida";
 
 const watcher = await marketWatcher({ tradingAccount: myAccount, });
 
 await watcher.watch("BTCUSDT", { watchTicks: true, });
 
 watcher.on("tick", (event) => {
+    const { tick, } = event.descriptor;
+
+    console.log(`Bitcoin price is now ${tick.bid} USDT`);
+});
+```
+
+Furthermore, ticks can be directly listened using the `watchTicks()` shorthand.
+```javascript
+import { watchTicks, } from "@reiryoku/mida";
+
+watchTicks(myAccount, "BTCUSDT", (event) => {
     const { tick, } = event.descriptor;
 
     console.log(`Bitcoin price is now ${tick.bid} USDT`);
