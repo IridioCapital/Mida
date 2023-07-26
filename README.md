@@ -316,11 +316,10 @@ else {
 
 How to get the price of a symbol.
 ```javascript
-const symbol = await myAccount.getSymbol("BTCUSDT");
-
-const price = await symbol.getBid();
-// or
 const price = await myAccount.getSymbolBid("BTCUSDT");
+// or
+const symbol = await myAccount.getSymbol("BTCUSDT");
+const price = await symbol.getBid();
 
 console.log(`Bitcoin price is ${price} USDT`);
 ```
