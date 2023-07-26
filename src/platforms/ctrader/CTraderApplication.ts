@@ -96,10 +96,10 @@ export class CTraderApplication {
 
     public async loginTradingAccount (accessToken: string, accountId: string): Promise<CTraderAccount> {
         const accounts = (await this.#demoConnection.sendCommand("ProtoOAGetAccountListByAccessTokenReq", { accessToken, })).ctidTraderAccount;
-        const account = accounts.find((account: Record<string, any>) => account.ctidTraderAccountId.toString() === accountId);
+        const account = accounts.find((account: any) => account.ctidTraderAccountId.toString() === accountId);
 
         if (!account) {
-            throw new Error();
+            throw new Error("Unknown account id");
         }
 
         const isLive = account.isLive === true;
@@ -110,7 +110,7 @@ export class CTraderApplication {
             ctidTraderAccountId: accountId,
         });
 
-        const accountDescriptor: Record<string, any> = (await connection.sendCommand("ProtoOATraderReq", {
+        const accountDescriptor: any = (await connection.sendCommand("ProtoOATraderReq", {
             ctidTraderAccountId: accountId,
         })).trader;
         const positionAccounting: MidaTradingAccountPositionAccounting = ((): MidaTradingAccountPositionAccounting => {
@@ -122,16 +122,14 @@ export class CTraderApplication {
                     return MidaTradingAccountPositionAccounting.NETTED;
                 }
                 default: {
-                    throw new Error();
+                    throw new Error("Unknown account type");
                 }
             }
         })();
-        const assets: Record<string, any>[] = (await connection.sendCommand("ProtoOAAssetListReq", {
-            ctidTraderAccountId: accountId,
-        })).asset;
-        const depositAsset: Record<string, any> =
-            // eslint-disable-next-line max-len
-            assets.find((asset: Record<string, any>) => asset.assetId.toString() === accountDescriptor.depositAssetId.toString()) as Record<string, any>;
+        const assets: any[] =
+            (await connection.sendCommand("ProtoOAAssetListReq", { ctidTraderAccountId: accountId, })).asset;
+        const depositAsset: any =
+            assets.find((asset: any) => asset.assetId.toString() === accountDescriptor.depositAssetId.toString());
 
         return new CTraderAccount({
             id: accountId,

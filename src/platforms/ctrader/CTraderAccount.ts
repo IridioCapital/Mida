@@ -596,25 +596,26 @@ export class CTraderAccount extends MidaTradingAccount {
         return normalizedOrder;
     }
 
-    public normalizePosition (position: Record<string, any>): CTraderPosition {
-        const symbol: string = this.#getPlainSymbolById(position.tradeData.symbolId.toString())?.symbolName;
+    public normalizePosition (cTraderPosition: Record<string, any>): CTraderPosition {
+        const symbol: string = this.#getPlainSymbolById(cTraderPosition.tradeData.symbolId.toString())?.symbolName;
         const completePlainSymbol: Record<string, any> = this.#getCompletePlainSymbol(symbol);
-        const lotUnits: MidaDecimal = decimal(completePlainSymbol.lotSize).divide(100);
-        const volume: MidaDecimal = decimal(position.tradeData.volume).divide(lotUnits).divide(100);
-        const entryPrice: MidaDecimal | undefined = volume.eq(0) ? undefined : decimal(position.price);
+        const lotUnits: MidaDecimal = decimal(completePlainSymbol.lotSize).div(100);
+        const volume: MidaDecimal = decimal(cTraderPosition.tradeData.volume).div(lotUnits).div(100);
+        const entryPrice: MidaDecimal | undefined = volume.eq(0) ? undefined : decimal(cTraderPosition.price);
 
         return new CTraderPosition({
-            id: position.positionId.toString(),
+            id: cTraderPosition.positionId.toString(),
             tradingAccount: this,
             volume,
             symbol,
             protection: this.normalizeProtection({
-                takeProfit: position.takeProfit,
-                stopLoss: position.stopLoss,
-                trailingStopLoss: position.trailingStopLoss,
+                takeProfit: cTraderPosition.takeProfit,
+                stopLoss: cTraderPosition.stopLoss,
+                trailingStopLoss: cTraderPosition.trailingStopLoss,
             }),
-            direction: position.tradeData.tradeSide === "BUY" ? MidaPositionDirection.LONG : MidaPositionDirection.SHORT,
+            direction: cTraderPosition.tradeData.tradeSide === "BUY" ? MidaPositionDirection.LONG : MidaPositionDirection.SHORT,
             entryPrice,
+            openDate: date(cTraderPosition.tradeData.openTimestamp),
             connection: this.#connection,
             cTraderEmitter: this.#cTraderEmitter,
         });

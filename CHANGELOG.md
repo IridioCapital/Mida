@@ -1,3 +1,10 @@
+## Features
+#### Core
+* Add `openDate` to `MidaPosition` to represent the position open date [#142](https://github.com/Reiryoku-Technologies/Mida/pull/142)
+
+#### Platforms
+* cTrader | Add open date to positions [#142](https://github.com/Reiryoku-Technologies/Mida/pull/142)
+
 2023.10.1 - 14-07-2023
 ===================
 ## Bug fixes

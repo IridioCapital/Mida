@@ -21,6 +21,7 @@
 */
 
 import { MidaTradingAccount, } from "#accounts/MidaTradingAccount";
+import { MidaDate, } from "#dates/MidaDate";
 import { MidaDecimal, } from "#decimals/MidaDecimal";
 import { MidaPosition, } from "#positions/MidaPosition";
 import { MidaPositionDirection, } from "#positions/MidaPositionDirection";
@@ -37,5 +38,6 @@ export type MidaPositionParameters = {
     volume: MidaDecimal;
     direction?: MidaPositionDirection;
     entryPrice?: MidaDecimal;
+    openDate?: MidaDate;
     protection?: MidaProtection;
 };

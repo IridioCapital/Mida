@@ -45,25 +45,11 @@ export class CTraderPosition extends MidaPosition {
     readonly #protectionChangeRequests: Map<string, [ MidaProtectionDirectives, Function, ]>;
 
     public constructor ({
-        id,
-        symbol,
-        tradingAccount,
-        volume,
-        direction,
-        entryPrice,
-        protection,
         connection,
         cTraderEmitter,
+        ...parameters
     }: CTraderPositionParameters) {
-        super({
-            id,
-            symbol,
-            volume,
-            direction,
-            entryPrice,
-            tradingAccount,
-            protection,
-        });
+        super(parameters);
 
         this.#connection = connection;
         this.#cTraderEmitter = cTraderEmitter;

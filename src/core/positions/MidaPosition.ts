@@ -21,6 +21,7 @@
 */
 
 import { MidaTradingAccount, } from "#accounts/MidaTradingAccount";
+import { MidaDate, } from "#dates/MidaDate";
 import { decimal, MidaDecimal, } from "#decimals/MidaDecimal";
 import { MidaDecimalConvertible, } from "#decimals/MidaDecimalConvertible";
 import { MidaEvent, } from "#events/MidaEvent";
@@ -43,6 +44,7 @@ export abstract class MidaPosition {
     #volume: MidaDecimal;
     #direction?: MidaPositionDirection;
     #entryPrice?: MidaDecimal;
+    readonly #openDate?: MidaDate;
     readonly #protection: MidaProtection;
     readonly #emitter: MidaEmitter;
 
@@ -53,6 +55,7 @@ export abstract class MidaPosition {
         volume,
         direction,
         entryPrice,
+        openDate,
         protection,
     }: MidaPositionParameters) {
         this.#id = id;
@@ -61,6 +64,7 @@ export abstract class MidaPosition {
         this.#volume = volume;
         this.#direction = direction;
         this.#entryPrice = entryPrice;
+        this.#openDate = openDate;
         this.#protection = protection ?? {};
         this.#emitter = new MidaEmitter();
     }
@@ -87,6 +91,10 @@ export abstract class MidaPosition {
 
     public get entryPrice (): MidaDecimal | undefined {
         return this.#entryPrice;
+    }
+
+    public get openDate (): MidaDate | undefined {
+        return this.#openDate;
     }
 
     public get protection (): MidaProtection {
