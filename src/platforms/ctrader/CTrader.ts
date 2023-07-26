@@ -28,7 +28,7 @@ import { CTraderLoginParameters, } from "!/src/platforms/ctrader/CTraderLoginPar
 
 /** Used as internal map to cache logged accounts */
 const loggedAccounts: Map<string, CTraderAccount> = new Map();
-const platformDescriptor: Record<string, any> = {
+const platformDescriptor: Record<string, string> = {
     name: "cTrader",
     siteUri: "https://ctrader.com",
     demoProxy: "demo.ctraderapi.com",
