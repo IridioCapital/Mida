@@ -3,7 +3,7 @@
         "baseUrl": ".",
         "declaration": true,
         "incremental": true,
-        "inlineSources": true,
+        //"inlineSources": true,
         "module": "commonjs",
         "noImplicitReturns": true,
         "noImplicitOverride": true,
@@ -14,7 +14,7 @@
             "#*": [ "./src/core/*" ]
         },
         "removeComments": true,
-        "sourceMap": true,
+        "sourceMap": false,
         "strict": true,
         "target": "es2020",
         "plugins": [

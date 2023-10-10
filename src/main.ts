@@ -20,19 +20,14 @@
  * THE SOFTWARE.
 */
 
-import { Mida, } from "!/src/core/Mida";
-import { logger, } from "#loggers/MidaLogger";
+import {Mida,} from "!/src/core/Mida";
+import {logger,} from "#loggers/MidaLogger";
 
 // <public-api>
 export * from "!/src/core/Mida";
 
-export * from "!/src/platforms/binance/Binance";
-export * from "!/src/platforms/bitflyer/BitFlyer";
-export * from "!/src/platforms/bybit/Bybit";
 export * from "!/src/platforms/ctrader/CTrader";
-export * from "!/src/platforms/okx/Okx";
 
-export * from "!/src/playground/MidaPlayground";
 // </public-api>
 
 logger.info(`Using Mida ${Mida.version}`);
